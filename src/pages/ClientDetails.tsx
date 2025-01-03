@@ -8,6 +8,22 @@ import {
   ListItem,
   ListItemText,
   Alert,
+  Button,
+  TextField,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Select,
+  MenuItem,
+  FormControl,
+  SelectChangeEvent,
 } from '@mui/material';
 import { useParams, Link } from 'react-router-dom';
 import api from '../api/axiosConfig';
@@ -42,6 +58,12 @@ interface Address {
   neighborhood: Neighborhood;
 }
 
+interface Observation {
+  id: string;
+  text: string;
+  created_at: string;
+}
+
 interface Client {
   id: string;
   name: string;
@@ -60,11 +82,27 @@ interface ApiResponse {
   payload: Client;
 }
 
+interface ObservationsApiResponse {
+  status: number;
+  payload: {
+    observations: Observation[];
+    total: number;
+  };
+}
+
 const ClientDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [client, setClient] = useState<Client | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [openModal, setOpenModal] = useState(false);
+  const [newObservation, setNewObservation] = useState('');
+  const [loadingObservation, setLoadingObservation] = useState(false);
+  const [observations, setObservations] = useState<Observation[]>([]);
+  const [totalPages, setTotalPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [loadingObservations, setLoadingObservations] = useState(true);
 
   useEffect(() => {
     const fetchClientDetails = async () => {
@@ -93,6 +131,33 @@ const ClientDetails: React.FC = () => {
 
     fetchClientDetails();
   }, [id]);
+
+  useEffect(() => {
+    const fetchObservations = async () => {
+      if (client) {
+        setLoadingObservations(true);
+        try {
+          const response = await api.get<ObservationsApiResponse>(
+            `/clients/${id}/observations?page=${currentPage}&size=${pageSize}`,
+          );
+
+          if (response.data && response.data.payload) {
+            setObservations(response.data.payload.observations);
+            setTotalPages(Math.ceil(response.data.payload.total / pageSize));
+          }
+        } catch (err: any) {
+          setError(
+            `Erro ao carregar observações: ${
+              err.response?.data?.message || err.message
+            }`,
+          );
+        } finally {
+          setLoadingObservations(false);
+        }
+      }
+    };
+    fetchObservations();
+  }, [id, currentPage, pageSize, client]);
 
   if (loading) {
     return (
@@ -131,6 +196,87 @@ const ClientDetails: React.FC = () => {
       </Box>
     );
   }
+
+  const handleAddObservation = async () => {
+    setLoadingObservation(true);
+    try {
+      await api.post(`/clients/${id}/observations`, { text: newObservation });
+      const response = await api.get<ApiResponse>(`/clients/${id}`);
+      if (response.data && response.data.payload) {
+        setClient(response.data.payload);
+      }
+      setNewObservation('');
+      handleCloseModal();
+    } catch (err: any) {
+      setError(
+        `Erro ao adicionar observação: ${
+          err.response?.data?.message || err.message
+        }`,
+      );
+    } finally {
+      setLoadingObservation(false);
+    }
+  };
+
+  const handleClickOpenModal = () => {
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setNewObservation('');
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
+
+  const handlePageSizeChange = (event: SelectChangeEvent<number>) => {
+    setPageSize(parseInt(event.target.value as string, 10));
+    setCurrentPage(1); // Reinicia a página quando muda o tamanho
+  };
+  const renderPaginationControls = () => {
+    const pageOptions = [10, 30, 50];
+    return (
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        marginTop={2}
+      >
+        <Box display="flex" alignItems="center">
+          <Typography style={{ marginRight: 8 }}>Exibir</Typography>
+          <FormControl size="small" style={{ marginRight: 16 }}>
+            <Select value={pageSize} onChange={handlePageSizeChange}>
+              {pageOptions.map((size) => (
+                <MenuItem key={size} value={size}>
+                  {size}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <Typography>por página</Typography>
+        </Box>
+        <Box display="flex" alignItems="center">
+          <Button
+            disabled={currentPage === 1}
+            onClick={() => handlePageChange(currentPage - 1)}
+          >
+            Anterior
+          </Button>
+          <Typography style={{ marginRight: 8, marginLeft: 8 }}>
+            Página {currentPage} de {totalPages}
+          </Typography>
+          <Button
+            disabled={currentPage === totalPages}
+            onClick={() => handlePageChange(currentPage + 1)}
+          >
+            Próxima
+          </Button>
+        </Box>
+      </Box>
+    );
+  };
 
   return (
     <Box
@@ -224,9 +370,65 @@ const ClientDetails: React.FC = () => {
               <Typography>Não possui</Typography>
             )}
           </ListItem>
+          <ListItem>
+            <Button variant="outlined" onClick={handleClickOpenModal}>
+              Adicionar Observação
+            </Button>
+          </ListItem>
         </List>
         <Link to="/clients">Voltar</Link>
+        <Typography variant="h6" gutterBottom style={{ marginTop: 16 }}>
+          Observações
+        </Typography>
+        {loadingObservations ? (
+          <Box display="flex" justifyContent="center">
+            <CircularProgress />
+          </Box>
+        ) : (
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Observação</TableCell>
+                  <TableCell>Data</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {observations.map((observation) => (
+                  <TableRow key={observation.id}>
+                    <TableCell>{observation.text}</TableCell>
+                    <TableCell>
+                      {new Date(observation.created_at).toLocaleString()}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
+        {renderPaginationControls()}
       </Paper>
+
+      <Dialog open={openModal} onClose={handleCloseModal}>
+        <DialogTitle>Adicionar Observação</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="Observação"
+            multiline
+            rows={4}
+            fullWidth
+            value={newObservation}
+            onChange={(e) => setNewObservation(e.target.value)}
+            style={{ marginTop: '8px' }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseModal}>Cancelar</Button>
+          <Button onClick={handleAddObservation} disabled={loadingObservation}>
+            {loadingObservation ? <CircularProgress size={24} /> : 'Adicionar'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

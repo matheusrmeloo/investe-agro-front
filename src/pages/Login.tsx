@@ -9,33 +9,41 @@ import {
   IconButton,
   InputAdornment,
   Link,
+  CircularProgress,
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import api from '../api/axiosConfig';
+import imageLeft from '../assets/bg-tablet.png'; // Caminho para a imagem
+import logo from '../assets/logo.svg'; // Caminho para a logo
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
     setError(null);
+    setIsLoading(true);
 
     try {
       const response = await api.post('/auth/login', { email, password });
-      const { token } = response.data;
-      localStorage.setItem('authToken', token);
-      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      navigate('/clients'); // Redireciona para a página principal após login bem-sucedido
-    } catch (err: any) {
-      if (err.response && err.response.data && err.response.data.message) {
-        setError(err.response.data.message);
+
+      if (response.status === 200) {
+        const { token } = response.data;
+        localStorage.setItem('authToken', token);
+        api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        navigate('/clients'); // Navegar para a página inicial
       } else {
-        setError('Erro ao tentar fazer login. Tente novamente mais tarde.');
+        setError('Credenciais inválidas. Por favor, tente novamente.');
       }
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Erro ao tentar fazer login.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -46,42 +54,71 @@ const LoginPage: React.FC = () => {
   return (
     <Box
       display="flex"
-      flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
+      flexDirection={{ xs: 'column', md: 'row' }}
       height="100vh"
-      padding={2}
-      bgcolor="#f5f5f5"
+      width="100vw"
+      sx={{
+        overflow: 'hidden', // Remove rolagem
+        backgroundColor: 'white',
+      }}
     >
+      {/* Seção da Imagem */}
       <Box
-        component="form"
-        onSubmit={handleLogin}
-        bgcolor="#ffffff"
-        padding={4}
-        borderRadius={4}
-        boxShadow={3}
-        width={{ xs: '90%', sm: '400px' }}
+        flex={1}
+        sx={{
+          backgroundImage: `url(${imageLeft})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          height: { xs: '40vh', md: '100vh' }, // Altura para telas menores
+        }}
+      />
+
+      {/* Formulário de Login */}
+      <Box
+        flex={1}
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: 2,
+          height: { xs: '60vh', md: '100vh' }, // Altura para telas menores
+        }}
       >
-        <Typography variant="h4" gutterBottom>
-          Login
-        </Typography>
+        {/* Logo da aplicação */}
+        <Box
+          component="img"
+          src={logo}
+          alt="Logo Investe Agro"
+          sx={{
+            width: { xs: 200, md: 300 }, // Ajusta o tamanho da logo em telas menores
+            marginBottom: { xs: 3, md: 6 },
+          }}
+        />
         {error && (
-          <Alert severity="error" style={{ marginBottom: '16px' }}>
+          <Alert severity="error" sx={{ marginBottom: 2, width: '100%' }}>
             {error}
           </Alert>
         )}
         <TextField
           fullWidth
-          label="E-mail"
+          label="Digite seu e-mail"
           type="email"
           variant="outlined"
           margin="normal"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              borderRadius: '8px',
+            },
+            maxWidth: { xs: '90%', md: '400px' }, // Ajusta a largura em telas menores
+          }}
         />
         <TextField
           fullWidth
-          label="Senha"
+          label="Digite sua senha"
           type={showPassword ? 'text' : 'password'}
           variant="outlined"
           margin="normal"
@@ -90,31 +127,58 @@ const LoginPage: React.FC = () => {
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
-                <IconButton onClick={togglePasswordVisibility} edge="end">
+                <IconButton onClick={togglePasswordVisibility}>
                   {showPassword ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
               </InputAdornment>
             ),
           }}
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              borderRadius: '8px',
+            },
+            maxWidth: { xs: '90%', md: '400px' }, // Ajusta a largura em telas menores
+          }}
         />
         <Link
           href="/forgot-password"
           underline="hover"
-          color="primary"
-          style={{ display: 'block', marginTop: '8px', textAlign: 'right' }}
+          sx={{ display: 'block', marginTop: 1, maxWidth: '400px' }}
         >
-          Esqueceu a senha?
+          Esqueci minha senha
         </Link>
         <Button
           type="submit"
-          fullWidth
           variant="contained"
-          color="primary"
           size="large"
-          style={{ marginTop: '16px' }}
+          disabled={isLoading}
+          onClick={handleLogin} // Função de login no clique
+          sx={{
+            marginTop: 3,
+            borderRadius: '8px',
+            bgcolor: '#1E5F05',
+            color: 'white',
+            maxWidth: { xs: '90%', md: '400px' }, // Ajusta largura em telas menores
+            width: '100%',
+            '&:hover': {
+              bgcolor: '#2E7D32',
+            },
+          }}
         >
-          Entrar
+          {isLoading ? (
+            <CircularProgress size={24} color="inherit" />
+          ) : (
+            'Entrar'
+          )}
         </Button>
+        <Typography
+          variant="body2"
+          color="#6B6B6B"
+          textAlign="center"
+          marginTop={3}
+        >
+          © Copyright - MR Solutions
+        </Typography>
       </Box>
     </Box>
   );

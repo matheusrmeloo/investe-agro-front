@@ -284,7 +284,7 @@ const RegisterClient: React.FC = () => {
     setSuccess(null);
 
     try {
-      const { hasSpouse, spouses, ...payload } = formData; // pega spouses e remove do payload original
+      const { hasSpouse, spouses, ...payload } = formData;
       let apiPayload: ApiPayload = { ...payload };
 
       if (hasSpouse) {
