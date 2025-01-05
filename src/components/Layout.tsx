@@ -15,9 +15,10 @@ import {
 } from '@mui/material';
 import PeopleIcon from '@mui/icons-material/People';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
-import AssessmentIcon from '@mui/icons-material/Assessment';
 import BadgeIcon from '@mui/icons-material/Badge';
 import MenuIcon from '@mui/icons-material/Menu';
+import AddHomeIcon from '@mui/icons-material/AddHome';
+import SummarizeIcon from '@mui/icons-material/Summarize';
 import logo from '../assets/logo.svg';
 
 const Layout: React.FC = () => {
@@ -83,10 +84,29 @@ const Layout: React.FC = () => {
         onClick={() => toggleDrawer(false)}
       >
         <ListItemIcon>
-          <AssessmentIcon style={{ color: '#1E5F05' }} />
+          <SummarizeIcon style={{ color: '#1E5F05' }} />
         </ListItemIcon>
         <ListItemText
           primary="Relatórios"
+          primaryTypographyProps={{
+            fontFamily: 'Arial',
+            fontSize: 16,
+            color: '#1E5F05',
+          }}
+        />
+      </ListItem>
+
+      <ListItem
+        component={Link}
+        to="/register-neighborhood"
+        sx={{ textDecoration: 'none', color: 'inherit' }}
+        onClick={() => toggleDrawer(false)}
+      >
+        <ListItemIcon>
+          <AddHomeIcon style={{ color: '#1E5F05' }} />
+        </ListItemIcon>
+        <ListItemText
+          primary="Cadastro Bairro"
           primaryTypographyProps={{
             fontFamily: 'Arial',
             fontSize: 16,
