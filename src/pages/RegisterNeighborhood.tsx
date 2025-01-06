@@ -73,7 +73,7 @@ const RegisterNeighborhood: React.FC = () => {
       );
       setSuccess(true);
       setTimeout(() => {
-        navigate('/');
+        navigate('/clients');
       }, 2000);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Erro ao registrar bairro');

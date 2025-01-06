@@ -42,7 +42,7 @@ interface Spouse {
 }
 
 interface Production {
-  type: 'milho' | 'pecuaria' | 'outros';
+  type: 'milho' | 'pecuaria' | 'mandioca' | 'fumo' | 'batata doce' | 'outros';
   custom_type?: string;
 }
 
@@ -199,12 +199,17 @@ const RegisterClient: React.FC = () => {
 
   const handleProductionTypeChange = (
     index: number,
-    event: SelectChangeEvent<'milho' | 'pecuaria' | 'outros'>,
+    event: SelectChangeEvent<
+      'milho' | 'pecuaria' | 'mandioca' | 'fumo' | 'batata doce' | 'outros'
+    >,
   ) => {
     const updatedProductions = [...formData.productions];
     updatedProductions[index].type = event.target.value as
       | 'milho'
       | 'pecuaria'
+      | 'mandioca'
+      | 'fumo'
+      | 'batata doce'
       | 'outros';
 
     if (event.target.value !== 'outros') {
@@ -529,13 +534,23 @@ const RegisterClient: React.FC = () => {
                 onChange={(e) =>
                   handleProductionTypeChange(
                     index,
-                    e as SelectChangeEvent<'milho' | 'pecuaria' | 'outros'>,
+                    e as SelectChangeEvent<
+                      | 'milho'
+                      | 'pecuaria'
+                      | 'mandioca'
+                      | 'fumo'
+                      | 'batata doce'
+                      | 'outros'
+                    >,
                   )
                 }
                 label="Tipo de Produção"
               >
                 <MenuItem value="milho">Milho</MenuItem>
                 <MenuItem value="pecuaria">Pecuária</MenuItem>
+                <MenuItem value="mandioca">Mandioca</MenuItem>
+                <MenuItem value="fumo">Fumo</MenuItem>
+                <MenuItem value="batata doce">Batata Doce</MenuItem>
                 <MenuItem value="outros">Outros</MenuItem>
               </Select>
             </FormControl>
