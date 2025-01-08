@@ -13,7 +13,7 @@ import {
   SelectChangeEvent,
   Grid,
 } from '@mui/material';
-import api from '../api/axiosConfig';
+import api, { backendUrl } from '../api/axiosConfig';
 
 interface Neighborhood {
   id: string;
@@ -160,6 +160,37 @@ const Reports: React.FC = () => {
       );
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleExportExcel = async () => {
+    try {
+      setError('');
+
+      const params: any = {};
+      if (documentNumber) {
+        params.documentNumber = documentNumber;
+      }
+      if (name) {
+        params.name = name;
+      }
+      if (production) {
+        params.production = production;
+      }
+      if (selectedNeighborhood) {
+        params.neighborhoodId = selectedNeighborhood;
+      }
+
+      // Constrói a URL com os parâmetros
+      const queryString = new URLSearchParams(params).toString();
+      const url = `${backendUrl}/report?${queryString}`;
+      window.open(url, '_blank');
+    } catch (err: any) {
+      setError(
+        `Erro ao exportar relatório: ${
+          err.response?.data?.message || err.message
+        }`,
+      );
     }
   };
 
@@ -349,6 +380,7 @@ const Reports: React.FC = () => {
               borderColor: '#1E5F05',
               color: '#1E5F05',
             }}
+            onClick={handleExportExcel}
           >
             Exportar Excel
           </Button>

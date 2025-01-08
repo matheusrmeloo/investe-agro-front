@@ -19,7 +19,7 @@ import BadgeIcon from '@mui/icons-material/Badge';
 import MenuIcon from '@mui/icons-material/Menu';
 import AddHomeIcon from '@mui/icons-material/AddHome';
 import SummarizeIcon from '@mui/icons-material/Summarize';
-import logo from '../assets/logo.svg';
+import logo from '../assets/conectaLogo.svg';
 
 const Layout: React.FC = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
