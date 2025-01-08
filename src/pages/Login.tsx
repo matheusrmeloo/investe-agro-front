@@ -14,7 +14,7 @@ import {
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import api from '../api/axiosConfig';
 import imageLeft from '../assets/bg-tablet.png'; // Caminho para a imagem
-import logo from '../assets/logo.svg'; // Caminho para a logo
+import logo from '../assets/conectaLogo.svg'; // Caminho para a logo
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');

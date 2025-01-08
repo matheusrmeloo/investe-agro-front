@@ -26,7 +26,19 @@ import {
   SelectChangeEvent,
 } from '@mui/material';
 import { useParams, Link } from 'react-router-dom';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import api from '../api/axiosConfig';
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#006400', // Verde escuro
+    },
+    secondary: {
+      main: '#004d00', // Verde ainda mais escuro
+    },
+  },
+});
 
 interface Spouse {
   id: string;
@@ -167,7 +179,7 @@ const ClientDetails: React.FC = () => {
         alignItems="center"
         height="100vh"
       >
-        <CircularProgress />
+        <CircularProgress color="primary" />
       </Box>
     );
   }
@@ -247,7 +259,11 @@ const ClientDetails: React.FC = () => {
         <Box display="flex" alignItems="center">
           <Typography style={{ marginRight: 8 }}>Exibir</Typography>
           <FormControl size="small" style={{ marginRight: 16 }}>
-            <Select value={pageSize} onChange={handlePageSizeChange}>
+            <Select
+              value={pageSize}
+              onChange={handlePageSizeChange}
+              color="primary"
+            >
               {pageOptions.map((size) => (
                 <MenuItem key={size} value={size}>
                   {size}
@@ -261,6 +277,7 @@ const ClientDetails: React.FC = () => {
           <Button
             disabled={currentPage === 1}
             onClick={() => handlePageChange(currentPage - 1)}
+            color="primary"
           >
             Anterior
           </Button>
@@ -270,6 +287,7 @@ const ClientDetails: React.FC = () => {
           <Button
             disabled={currentPage === totalPages}
             onClick={() => handlePageChange(currentPage + 1)}
+            color="primary"
           >
             Próxima
           </Button>
@@ -279,157 +297,183 @@ const ClientDetails: React.FC = () => {
   };
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      padding={3}
-      bgcolor="#f5f5f5"
-      minHeight="100vh"
-    >
-      <Typography variant="h4" gutterBottom>
-        Detalhes do Cliente
-      </Typography>
-      <Paper elevation={3} style={{ padding: 20, width: '80%', maxWidth: 600 }}>
-        <Typography variant="h6" gutterBottom>
-          {client.name}
+    <ThemeProvider theme={theme}>
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        padding={3}
+        bgcolor="#f5f5f5"
+        minHeight="100vh"
+      >
+        <Typography variant="h4" gutterBottom color="primary">
+          Detalhes do Cliente
         </Typography>
-        <List>
-          <ListItem>
-            <ListItemText primary="CPF" secondary={client.document_number} />
-          </ListItem>
-          <ListItem>
-            <ListItemText primary="Telefone" secondary={client.phone} />
-          </ListItem>
-          <ListItem>
-            <ListItemText primary="Email" secondary={client.email} />
-          </ListItem>
-          <ListItem>
-            <ListItemText
-              primary="Data de Nascimento"
-              secondary={client.birth_date}
-            />
-          </ListItem>
-          <ListItem>
-            <ListItemText
-              primary="Status Social"
-              secondary={client.social_status}
-            />
-          </ListItem>
-          {client.address && (
+        <Paper
+          elevation={3}
+          style={{ padding: 20, width: '80%', maxWidth: 600 }}
+        >
+          <Typography variant="h6" gutterBottom color="secondary">
+            {client.name}
+          </Typography>
+          <List>
+            <ListItem>
+              <ListItemText primary="CPF" secondary={client.document_number} />
+            </ListItem>
+            <ListItem>
+              <ListItemText primary="Telefone" secondary={client.phone} />
+            </ListItem>
+            <ListItem>
+              <ListItemText primary="Email" secondary={client.email} />
+            </ListItem>
             <ListItem>
               <ListItemText
-                primary="Endereço"
-                secondary={
-                  <>
-                    {client.address.street}, {client.address.number},{' '}
-                    {client.address.complement} - CEP: {client.address.cep}
-                    <br />
-                    {client.address.neighborhood.name} -{' '}
-                    {client.address.neighborhood.city}/
-                    {client.address.neighborhood.state}
-                  </>
-                }
+                primary="Data de Nascimento"
+                secondary={client.birth_date}
               />
             </ListItem>
-          )}
-          <ListItem>
-            <ListItemText primary="Cônjuge(s)" />
-            {client.spouses && client.spouses.length > 0 ? (
-              <List>
-                {client.spouses.map((spouse) => (
-                  <ListItem key={spouse.id}>
-                    <ListItemText
-                      primary={spouse.name}
-                      secondary={`CPF: ${spouse.document_number}, Telefone: ${spouse.phone}, Data de Nascimento: ${spouse.birth_date}`}
-                    />
-                  </ListItem>
-                ))}
-              </List>
-            ) : (
-              <Typography>Não possui</Typography>
+            <ListItem>
+              <ListItemText
+                primary="Status Social"
+                secondary={client.social_status}
+              />
+            </ListItem>
+            {client.address && (
+              <ListItem>
+                <ListItemText
+                  primary="Endereço"
+                  secondary={
+                    <>
+                      {client.address.street}, {client.address.number},{' '}
+                      {client.address.complement} - CEP: {client.address.cep}
+                      <br />
+                      {client.address.neighborhood.name} -{' '}
+                      {client.address.neighborhood.city}/
+                      {client.address.neighborhood.state}
+                    </>
+                  }
+                />
+              </ListItem>
             )}
-          </ListItem>
-          <ListItem>
-            <ListItemText primary="Produções" />
-            {client.productions && client.productions.length > 0 ? (
-              <List>
-                {client.productions.map((production) => (
-                  <ListItem key={production.id}>
-                    <ListItemText
-                      primary={production.type}
-                      secondary={
-                        production.custom_type &&
-                        `Tipo Customizado: ${production.custom_type}`
-                      }
-                    />
-                  </ListItem>
-                ))}
-              </List>
-            ) : (
-              <Typography>Não possui</Typography>
-            )}
-          </ListItem>
-          <ListItem>
-            <Button variant="outlined" onClick={handleClickOpenModal}>
-              Adicionar Observação
-            </Button>
-          </ListItem>
-        </List>
-        <Link to="/clients">Voltar</Link>
-        <Typography variant="h6" gutterBottom style={{ marginTop: 16 }}>
-          Observações
-        </Typography>
-        {loadingObservations ? (
-          <Box display="flex" justifyContent="center">
-            <CircularProgress />
-          </Box>
-        ) : (
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Observação</TableCell>
-                  <TableCell>Data</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {observations.map((observation) => (
-                  <TableRow key={observation.id}>
-                    <TableCell>{observation.text}</TableCell>
-                    <TableCell>
-                      {new Date(observation.created_at).toLocaleString()}
-                    </TableCell>
+            <ListItem>
+              <ListItemText primary="Cônjuge(s)" />
+              {client.spouses && client.spouses.length > 0 ? (
+                <List>
+                  {client.spouses.map((spouse) => (
+                    <ListItem key={spouse.id}>
+                      <ListItemText
+                        primary={spouse.name}
+                        secondary={`CPF: ${spouse.document_number}, Telefone: ${spouse.phone}, Data de Nascimento: ${spouse.birth_date}`}
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              ) : (
+                <Typography>Não possui</Typography>
+              )}
+            </ListItem>
+            <ListItem>
+              <ListItemText primary="Produções" />
+              {client.productions && client.productions.length > 0 ? (
+                <List>
+                  {client.productions.map((production) => (
+                    <ListItem key={production.id}>
+                      <ListItemText
+                        primary={production.type}
+                        secondary={
+                          production.custom_type &&
+                          `Tipo Customizado: ${production.custom_type}`
+                        }
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              ) : (
+                <Typography>Não possui</Typography>
+              )}
+            </ListItem>
+            <ListItem>
+              <Button
+                variant="outlined"
+                onClick={handleClickOpenModal}
+                color="primary"
+              >
+                Adicionar Observação
+              </Button>
+            </ListItem>
+          </List>
+          <Link to="/clients" style={{ color: theme.palette.primary.main }}>
+            Voltar
+          </Link>
+          <Typography
+            variant="h6"
+            gutterBottom
+            style={{ marginTop: 16 }}
+            color="secondary"
+          >
+            Observações
+          </Typography>
+          {loadingObservations ? (
+            <Box display="flex" justifyContent="center">
+              <CircularProgress color="primary" />
+            </Box>
+          ) : (
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Observação</TableCell>
+                    <TableCell>Data</TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        )}
-        {renderPaginationControls()}
-      </Paper>
+                </TableHead>
+                <TableBody>
+                  {observations.map((observation) => (
+                    <TableRow key={observation.id}>
+                      <TableCell>{observation.text}</TableCell>
+                      <TableCell>
+                        {new Date(observation.created_at).toLocaleString()}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
+          {renderPaginationControls()}
+        </Paper>
 
-      <Dialog open={openModal} onClose={handleCloseModal}>
-        <DialogTitle>Adicionar Observação</DialogTitle>
-        <DialogContent>
-          <TextField
-            label="Observação"
-            multiline
-            rows={4}
-            fullWidth
-            value={newObservation}
-            onChange={(e) => setNewObservation(e.target.value)}
-            style={{ marginTop: '8px' }}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseModal}>Cancelar</Button>
-          <Button onClick={handleAddObservation} disabled={loadingObservation}>
-            {loadingObservation ? <CircularProgress size={24} /> : 'Adicionar'}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Box>
+        <Dialog open={openModal} onClose={handleCloseModal}>
+          <DialogTitle>Adicionar Observação</DialogTitle>
+          <DialogContent>
+            <TextField
+              label="Observação"
+              multiline
+              rows={4}
+              fullWidth
+              value={newObservation}
+              onChange={(e) => setNewObservation(e.target.value)}
+              style={{ marginTop: '8px' }}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseModal} color="secondary">
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleAddObservation}
+              disabled={loadingObservation}
+              color="primary"
+            >
+              {loadingObservation ? (
+                <CircularProgress size={24} />
+              ) : (
+                'Adicionar'
+              )}
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Box>
+    </ThemeProvider>
   );
 };
 

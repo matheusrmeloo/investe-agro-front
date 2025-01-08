@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+export const backendUrl = 'https://investe-agro-api-production.up.railway.app';
+
 const api = axios.create({
-  baseURL: 'https://investe-agro-api-production.up.railway.app',
+  baseURL: backendUrl,
 });
 
 export default api;
