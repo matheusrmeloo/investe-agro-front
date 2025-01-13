@@ -167,6 +167,9 @@ const ListClients: React.FC = () => {
                 label="Tipo de Produção"
               >
                 <MenuItem value="">Todos</MenuItem>
+                <MenuItem value="batata doce">Batata Doce</MenuItem>
+                <MenuItem value="fumo">Fumo</MenuItem>
+                <MenuItem value="mandioca">Mandioca</MenuItem>
                 <MenuItem value="milho">Milho</MenuItem>
                 <MenuItem value="pecuaria">Pecuária</MenuItem>
                 <MenuItem value="outros">Outros</MenuItem>
@@ -226,9 +229,6 @@ const ListClients: React.FC = () => {
                       <CardContent sx={{ flexGrow: 1 }}>
                         <Typography variant="h6" component="div">
                           {client.name}
-                        </Typography>
-                        <Typography color="textSecondary">
-                          CPF: {client.document_number}
                         </Typography>
                         <Typography color="textSecondary">
                           Telefone: {client.phone}
