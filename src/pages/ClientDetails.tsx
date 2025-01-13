@@ -24,7 +24,10 @@ import {
   MenuItem,
   FormControl,
   SelectChangeEvent,
+  IconButton,
+  Snackbar,
 } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { useParams, Link } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import api from '../api/axiosConfig';
@@ -87,6 +90,7 @@ interface Client {
   spouses: Spouse[];
   productions: Production[];
   address: Address | null;
+  observations: Observation[];
 }
 
 interface ApiResponse {
@@ -115,6 +119,24 @@ const ClientDetails: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [loadingObservations, setLoadingObservations] = useState(true);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null);
+  const [snackbarType, setSnackbarType] = useState<'success' | 'error'>(
+    'error',
+  );
+
+  const showSnackbar = (
+    message: string,
+    type: 'success' | 'error' = 'error',
+  ) => {
+    setSnackbarMessage(message);
+    setSnackbarType(type);
+    setSnackbarOpen(true);
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+  };
 
   useEffect(() => {
     const fetchClientDetails = async () => {
@@ -131,7 +153,7 @@ const ClientDetails: React.FC = () => {
           );
         }
       } catch (err: any) {
-        setError(
+        showSnackbar(
           `Erro ao carregar detalhes do cliente: ${
             err.response?.data?.message || err.message
           }`,
@@ -158,7 +180,7 @@ const ClientDetails: React.FC = () => {
             setTotalPages(Math.ceil(response.data.payload.total / pageSize));
           }
         } catch (err: any) {
-          setError(
+          showSnackbar(
             `Erro ao carregar observações: ${
               err.response?.data?.message || err.message
             }`,
@@ -216,17 +238,47 @@ const ClientDetails: React.FC = () => {
       const response = await api.get<ApiResponse>(`/clients/${id}`);
       if (response.data && response.data.payload) {
         setClient(response.data.payload);
+        showSnackbar('Observação adicionada com sucesso!', 'success');
       }
       setNewObservation('');
       handleCloseModal();
     } catch (err: any) {
-      setError(
+      showSnackbar(
         `Erro ao adicionar observação: ${
           err.response?.data?.message || err.message
         }`,
+        'error',
       );
     } finally {
       setLoadingObservation(false);
+    }
+  };
+
+  const handleDeleteObservation = async (observationId: string) => {
+    try {
+      const token = localStorage.getItem('authToken');
+      await api.delete(`/clients/${observationId}/observations`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      // Após deletar, recarregar as observações
+      const response = await api.get<ObservationsApiResponse>(
+        `/clients/${id}/observations?page=${currentPage}&size=${pageSize}`,
+      );
+
+      if (response.data && response.data.payload) {
+        setObservations(response.data.payload.observations);
+        setTotalPages(Math.ceil(response.data.payload.total / pageSize));
+        showSnackbar('Observação deletada com sucesso!', 'success');
+      }
+    } catch (err: any) {
+      showSnackbar(
+        `Erro ao excluir observação: ${
+          err.response?.data?.message || err.message
+        }`,
+        'error',
+      );
     }
   };
 
@@ -401,45 +453,56 @@ const ClientDetails: React.FC = () => {
                 Adicionar Observação
               </Button>
             </ListItem>
+            <Typography
+              variant="h6"
+              gutterBottom
+              style={{ marginTop: 16 }}
+              color="secondary"
+            >
+              Observações
+            </Typography>
+            {loadingObservations ? (
+              <Box display="flex" justifyContent="center">
+                <CircularProgress color="primary" />
+              </Box>
+            ) : (
+              <TableContainer component={Paper}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Observação</TableCell>
+                      <TableCell>Data</TableCell>
+                      <TableCell>Ações</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {observations.map((observation) => (
+                      <TableRow key={observation.id}>
+                        <TableCell>{observation.text}</TableCell>
+                        <TableCell>
+                          {new Date(observation.created_at).toLocaleString()}
+                        </TableCell>
+                        <TableCell>
+                          <IconButton
+                            onClick={() =>
+                              handleDeleteObservation(observation.id)
+                            }
+                            color="secondary"
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            )}
+            {renderPaginationControls()}
           </List>
           <Link to="/clients" style={{ color: theme.palette.primary.main }}>
             Voltar
           </Link>
-          <Typography
-            variant="h6"
-            gutterBottom
-            style={{ marginTop: 16 }}
-            color="secondary"
-          >
-            Observações
-          </Typography>
-          {loadingObservations ? (
-            <Box display="flex" justifyContent="center">
-              <CircularProgress color="primary" />
-            </Box>
-          ) : (
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Observação</TableCell>
-                    <TableCell>Data</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {observations.map((observation) => (
-                    <TableRow key={observation.id}>
-                      <TableCell>{observation.text}</TableCell>
-                      <TableCell>
-                        {new Date(observation.created_at).toLocaleString()}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          )}
-          {renderPaginationControls()}
         </Paper>
 
         <Dialog open={openModal} onClose={handleCloseModal}>
@@ -472,6 +535,20 @@ const ClientDetails: React.FC = () => {
             </Button>
           </DialogActions>
         </Dialog>
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        >
+          <Alert
+            onClose={handleCloseSnackbar}
+            severity={snackbarType}
+            sx={{ width: '100%' }}
+          >
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
       </Box>
     </ThemeProvider>
   );

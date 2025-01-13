@@ -19,7 +19,8 @@ import BadgeIcon from '@mui/icons-material/Badge';
 import MenuIcon from '@mui/icons-material/Menu';
 import AddHomeIcon from '@mui/icons-material/AddHome';
 import SummarizeIcon from '@mui/icons-material/Summarize';
-import logo from '../assets/conectaLogo.svg';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import logoConectaLC from '../assets/logoLCConectaOF.svg';
 
 const Layout: React.FC = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -133,6 +134,28 @@ const Layout: React.FC = () => {
           }}
         />
       </ListItem>
+
+      <ListItem
+        component={Link}
+        to="/"
+        sx={{ textDecoration: 'none', color: 'inherit' }}
+        onClick={() => {
+          localStorage.removeItem('authToken');
+          toggleDrawer(false);
+        }}
+      >
+        <ListItemIcon>
+          <ExitToAppIcon style={{ color: '#1E5F05' }} />
+        </ListItemIcon>
+        <ListItemText
+          primary="Sair"
+          primaryTypographyProps={{
+            fontFamily: 'Arial',
+            fontSize: 16,
+            color: '#1E5F05',
+          }}
+        />
+      </ListItem>
     </List>
   );
 
@@ -153,7 +176,7 @@ const Layout: React.FC = () => {
             <MenuIcon />
             <Box
               component="img"
-              src={logo}
+              src={logoConectaLC}
               alt="Logo Investe Agro"
               sx={{
                 height: 40,
@@ -171,7 +194,7 @@ const Layout: React.FC = () => {
           >
             <Box
               component="img"
-              src={logo}
+              src={logoConectaLC}
               alt="Logo Investe Agro"
               sx={{ height: 40 }}
             />
