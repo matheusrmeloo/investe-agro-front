@@ -31,6 +31,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useParams, Link } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import api from '../api/axiosConfig';
+import { format, parseISO } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 const theme = createTheme({
   palette: {
@@ -87,6 +89,9 @@ interface Client {
   email: string;
   birth_date: string;
   social_status: string;
+  car: boolean;
+  caf_dap: boolean;
+  caf_dap_number: string | null;
   spouses: Spouse[];
   productions: Production[];
   address: Address | null;
@@ -105,6 +110,32 @@ interface ObservationsApiResponse {
     total: number;
   };
 }
+
+// Helper function to title case a string
+const titleCase = (str: string): string => {
+  if (!str) return ''; // Handle null or empty strings
+  return str
+    .toLowerCase()
+    .split(' ')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+};
+
+// Helper functions to format data
+const formatCpf = (cpf: string): string => {
+  if (!cpf) return '';
+  return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+};
+
+const formatPhone = (phone: string): string => {
+  if (!phone) return '';
+  return phone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+};
+
+const formatDate = (date: string): string => {
+  if (!date) return '';
+  return format(parseISO(date), 'dd/MM/yyyy', { locale: ptBR });
+};
 
 const ClientDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -154,8 +185,7 @@ const ClientDetails: React.FC = () => {
         }
       } catch (err: any) {
         showSnackbar(
-          `Erro ao carregar detalhes do cliente: ${
-            err.response?.data?.message || err.message
+          `Erro ao carregar detalhes do cliente: ${err.response?.data?.message || err.message
           }`,
         );
       } finally {
@@ -181,8 +211,7 @@ const ClientDetails: React.FC = () => {
           }
         } catch (err: any) {
           showSnackbar(
-            `Erro ao carregar observações: ${
-              err.response?.data?.message || err.message
+            `Erro ao carregar observações: ${err.response?.data?.message || err.message
             }`,
           );
         } finally {
@@ -244,8 +273,7 @@ const ClientDetails: React.FC = () => {
       handleCloseModal();
     } catch (err: any) {
       showSnackbar(
-        `Erro ao adicionar observação: ${
-          err.response?.data?.message || err.message
+        `Erro ao adicionar observação: ${err.response?.data?.message || err.message
         }`,
         'error',
       );
@@ -274,8 +302,7 @@ const ClientDetails: React.FC = () => {
       }
     } catch (err: any) {
       showSnackbar(
-        `Erro ao excluir observação: ${
-          err.response?.data?.message || err.message
+        `Erro ao excluir observação: ${err.response?.data?.message || err.message
         }`,
         'error',
       );
@@ -370,10 +397,10 @@ const ClientDetails: React.FC = () => {
           </Typography>
           <List>
             <ListItem>
-              <ListItemText primary="CPF" secondary={client.document_number} />
+              <ListItemText primary="CPF" secondary={formatCpf(client.document_number)} />
             </ListItem>
             <ListItem>
-              <ListItemText primary="Telefone" secondary={client.phone} />
+              <ListItemText primary="Telefone" secondary={formatPhone(client.phone)} />
             </ListItem>
             <ListItem>
               <ListItemText primary="Email" secondary={client.email} />
@@ -381,7 +408,7 @@ const ClientDetails: React.FC = () => {
             <ListItem>
               <ListItemText
                 primary="Data de Nascimento"
-                secondary={client.birth_date}
+                secondary={formatDate(client.birth_date)}
               />
             </ListItem>
             <ListItem>
@@ -390,6 +417,17 @@ const ClientDetails: React.FC = () => {
                 secondary={client.social_status}
               />
             </ListItem>
+            <ListItem>
+              <ListItemText primary="Possui CAR" secondary={client.car ? 'Sim' : 'Não'} />
+            </ListItem>
+            <ListItem>
+              <ListItemText primary="Possui CAF/DAP" secondary={client.caf_dap ? 'Sim' : 'Não'} />
+            </ListItem>
+            {client.caf_dap && client.caf_dap_number && (
+              <ListItem>
+                <ListItemText primary="Número do CAF/DAP" secondary={client.caf_dap_number} />
+              </ListItem>
+            )}
             {client.address && (
               <ListItem>
                 <ListItemText
@@ -407,7 +445,8 @@ const ClientDetails: React.FC = () => {
                 />
               </ListItem>
             )}
-            <ListItem>
+
+            <ListItem style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
               <ListItemText primary="Cônjuge(s)" />
               {client.spouses && client.spouses.length > 0 ? (
                 <List>
@@ -415,7 +454,7 @@ const ClientDetails: React.FC = () => {
                     <ListItem key={spouse.id}>
                       <ListItemText
                         primary={spouse.name}
-                        secondary={`CPF: ${spouse.document_number}, Telefone: ${spouse.phone}, Data de Nascimento: ${spouse.birth_date}`}
+                        secondary={`CPF: ${formatCpf(spouse.document_number)}, Telefone: ${formatPhone(spouse.phone)}, Data de Nascimento: ${formatDate(spouse.birth_date)}`}
                       />
                     </ListItem>
                   ))}
@@ -424,17 +463,18 @@ const ClientDetails: React.FC = () => {
                 <Typography>Não possui</Typography>
               )}
             </ListItem>
-            <ListItem>
-              <ListItemText primary="Produções" />
+
+            <ListItem style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
+              <ListItemText primary="Produção" />
               {client.productions && client.productions.length > 0 ? (
                 <List>
                   {client.productions.map((production) => (
                     <ListItem key={production.id}>
                       <ListItemText
-                        primary={production.type}
+                        primary={`- ${titleCase(production.type)}`}
                         secondary={
                           production.custom_type &&
-                          `Tipo Customizado: ${production.custom_type}`
+                          `Tipo Customizado: ${titleCase(production.custom_type)}`
                         }
                       />
                     </ListItem>

@@ -42,7 +42,14 @@ interface Spouse {
 }
 
 interface Production {
-  type: 'milho' | 'pecuaria' | 'mandioca' | 'fumo' | 'batata doce' | 'outros';
+  type:
+  | 'milho'
+  | 'pecuaria'
+  | 'mandioca'
+  | 'fumo'
+  | 'batata doce'
+  | 'trator'
+  | 'outros';
   custom_type?: string;
 }
 
@@ -53,6 +60,9 @@ interface FormData {
   email: string;
   birth_date: string;
   social_status: string;
+  car?: boolean;
+  caf_dap?: boolean;
+  caf_dap_number?: string;
   hasSpouse: boolean;
   spouses: Spouse[];
   productions: Production[];
@@ -71,6 +81,9 @@ const initialFormData: FormData = {
   email: '',
   birth_date: '',
   social_status: '',
+  car: false,
+  caf_dap: false,
+  caf_dap_number: '',
   hasSpouse: false,
   spouses: [
     {
@@ -115,8 +128,7 @@ const RegisterClient: React.FC = () => {
         }
       } catch (err: any) {
         setError(
-          `Erro ao carregar bairros: ${
-            err.response?.data?.message || err.message
+          `Erro ao carregar bairros: ${err.response?.data?.message || err.message
           }`,
         );
       } finally {
@@ -173,13 +185,13 @@ const RegisterClient: React.FC = () => {
       hasSpouse: event.target.checked,
       spouses: event.target.checked
         ? [
-            {
-              name: '',
-              document_number: '',
-              phone: '',
-              birth_date: '',
-            },
-          ]
+          {
+            name: '',
+            document_number: '',
+            phone: '',
+            birth_date: '',
+          },
+        ]
         : [],
     }));
   };
@@ -200,7 +212,13 @@ const RegisterClient: React.FC = () => {
   const handleProductionTypeChange = (
     index: number,
     event: SelectChangeEvent<
-      'milho' | 'pecuaria' | 'mandioca' | 'fumo' | 'batata doce' | 'outros'
+      | 'milho'
+      | 'pecuaria'
+      | 'mandioca'
+      | 'fumo'
+      | 'batata doce'
+      | 'trator'
+      | 'outros'
     >,
   ) => {
     const updatedProductions = [...formData.productions];
@@ -210,6 +228,7 @@ const RegisterClient: React.FC = () => {
       | 'mandioca'
       | 'fumo'
       | 'batata doce'
+      | 'trator'
       | 'outros';
 
     if (event.target.value !== 'outros') {
@@ -453,6 +472,50 @@ const RegisterClient: React.FC = () => {
           </Box>
         )}
 
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={formData.car}
+              onChange={(event) =>
+                setFormData((prevData) => ({
+                  ...prevData,
+                  car: event.target.checked,
+                }))
+              }
+            />
+          }
+          label="Possui CAR?"
+        />
+
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={formData.caf_dap}
+              onChange={(event) =>
+                setFormData((prevData) => ({
+                  ...prevData,
+                  caf_dap: event.target.checked,
+                  caf_dap_number: event.target.checked ? prevData.caf_dap_number : '', // Limpa o número se o checkbox for desmarcado
+                }))
+              }
+            />
+          }
+          label="Possui CAF/DAP?"
+        />
+
+        {formData.caf_dap && (
+          <TextField
+            fullWidth
+            label="Número do CAF/DAP"
+            name="caf_dap_number"
+            value={formData.caf_dap_number}
+            onChange={handleInputChange}
+            margin="normal"
+            required
+          />
+        )}
+
+
         <Typography variant="h6" gutterBottom>
           Endereço
         </Typography>
@@ -540,6 +603,7 @@ const RegisterClient: React.FC = () => {
                       | 'mandioca'
                       | 'fumo'
                       | 'batata doce'
+                      | 'trator'
                       | 'outros'
                     >,
                   )
@@ -551,6 +615,7 @@ const RegisterClient: React.FC = () => {
                 <MenuItem value="mandioca">Mandioca</MenuItem>
                 <MenuItem value="fumo">Fumo</MenuItem>
                 <MenuItem value="batata doce">Batata Doce</MenuItem>
+                <MenuItem value="trator">Trator</MenuItem>
                 <MenuItem value="outros">Outros</MenuItem>
               </Select>
             </FormControl>

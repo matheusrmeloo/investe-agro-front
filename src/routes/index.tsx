@@ -9,6 +9,8 @@ import ClientNotes from '../pages/ClientNotes';
 import Reports from '../pages/Reports';
 import RegisterUser from '../pages/RegisterUser';
 import RegisterNeighborhood from '../pages/RegisterNeighborhood';
+import RegisterOperation from '../pages/RegisterOperation';
+import ListOperations from '../pages/ListOperations';
 
 const AppRoutes: React.FC = () => {
   return (
@@ -26,6 +28,8 @@ const AppRoutes: React.FC = () => {
             path="/register-neighborhood"
             element={<RegisterNeighborhood />}
           />
+          <Route path="/register-operation" element={<RegisterOperation />} />;
+          <Route path="/operations" element={<ListOperations />} />;
           ;
         </Route>
       </Routes>

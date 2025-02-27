@@ -12,6 +12,8 @@ import {
   Toolbar,
   AppBar,
   Typography,
+  Collapse,
+  ListItemButton, // Changed ListItem to ListItemButton
 } from '@mui/material';
 import PeopleIcon from '@mui/icons-material/People';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
@@ -21,12 +23,16 @@ import AddHomeIcon from '@mui/icons-material/AddHome';
 import SummarizeIcon from '@mui/icons-material/Summarize';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import logoConectaLC from '../assets/logoLCConectaOF.svg';
+import AgricultureIcon from '@mui/icons-material/Agriculture';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
 
 const Layout: React.FC = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const isLargeScreen = useMediaQuery(
     '(min-width: 1021px) and (min-height: 1361px)',
   );
+  const [operationsOpen, setOperationsOpen] = useState(false);
 
   useEffect(() => {
     if (isLargeScreen) {
@@ -36,6 +42,10 @@ const Layout: React.FC = () => {
 
   const toggleDrawer = (open: boolean) => {
     setDrawerOpen(open);
+  };
+
+  const handleOperationsClick = () => {
+    setOperationsOpen(!operationsOpen);
   };
 
   const navigationList = (
@@ -77,6 +87,68 @@ const Layout: React.FC = () => {
           }}
         />
       </ListItem>
+
+      {/* Operations Dropdown */}
+      <ListItemButton onClick={handleOperationsClick}>
+        {' '}
+        {/* Changed ListItem to ListItemButton */}
+        <ListItemIcon>
+          <AgricultureIcon style={{ color: '#1E5F05' }} />
+        </ListItemIcon>
+        <ListItemText
+          primary="Operações"
+          primaryTypographyProps={{
+            fontFamily: 'Arial',
+            fontSize: 16,
+            color: '#1E5F05',
+          }}
+        />
+        {operationsOpen ? <ExpandLess /> : <ExpandMore />}
+      </ListItemButton>
+      <Collapse in={operationsOpen} timeout="auto" unmountOnExit>
+        <List component="div" disablePadding>
+          <ListItem
+            component={Link}
+            to="/register-operation"
+            sx={{
+              pl: 4,
+              textDecoration: 'none',
+              color: 'inherit',
+              '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' },
+            }}
+            onClick={() => toggleDrawer(false)}
+          >
+            <ListItemText
+              primary="Cadastro"
+              primaryTypographyProps={{
+                fontFamily: 'Arial',
+                fontSize: 16,
+                color: '#1E5F05',
+              }}
+            />
+          </ListItem>
+          <ListItem
+            component={Link}
+            to="/operations" // Assuming you have a route for listing operations
+            sx={{
+              pl: 4,
+              textDecoration: 'none',
+              color: 'inherit',
+              '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' },
+            }}
+            onClick={() => toggleDrawer(false)}
+          >
+            <ListItemText
+              primary="Listagem"
+              primaryTypographyProps={{
+                fontFamily: 'Arial',
+                fontSize: 16,
+                color: '#1E5F05',
+              }}
+            />
+          </ListItem>
+        </List>
+      </Collapse>
 
       <ListItem
         component={Link}
