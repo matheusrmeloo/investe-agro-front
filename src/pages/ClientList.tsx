@@ -15,6 +15,7 @@ import {
   Alert,
   SelectChangeEvent,
   CardActionArea,
+  Paper,
 } from '@mui/material';
 import api from '../api/axiosConfig';
 import { Link } from 'react-router-dom';
@@ -126,18 +127,16 @@ const ListClients: React.FC = () => {
   };
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      padding={3}
-      bgcolor="#f5f5f5"
-      minHeight="100vh"
-    >
-      <Typography variant="h4" gutterBottom>
+    <Box sx={{ flexGrow: 1, padding: 3 }}>
+      <Typography
+        variant="h4"
+        gutterBottom
+        sx={{ color: '#1e5f05', textAlign: 'center' }}
+      >
         Lista de Produtores
       </Typography>
-      <Box width={{ xs: '95%', md: '80%' }} marginBottom={2}>
+
+      <Paper sx={{ padding: 3, marginBottom: 3 }}>
         <Grid container spacing={2} alignItems="center">
           <Grid item xs={12} md={4}>
             <TextField
@@ -146,6 +145,7 @@ const ListClients: React.FC = () => {
               name="documentNumber"
               value={filters.documentNumber}
               onChange={handleTextFieldChange}
+              margin="normal"
             />
           </Grid>
           <Grid item xs={12} md={4}>
@@ -155,10 +155,11 @@ const ListClients: React.FC = () => {
               name="name"
               value={filters.name}
               onChange={handleTextFieldChange}
+              margin="normal"
             />
           </Grid>
           <Grid item xs={12} md={4}>
-            <FormControl fullWidth>
+            <FormControl fullWidth margin="normal">
               <InputLabel>Tipo de Produção</InputLabel>
               <Select
                 name="production"
@@ -176,96 +177,98 @@ const ListClients: React.FC = () => {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={12} style={{ marginTop: 16 }}>
+          <Grid item xs={12}>
             <Button
               variant="contained"
               color="primary"
               onClick={handleSearchClick}
+              sx={{
+                backgroundColor: '#1e5f05',
+                '&:hover': { backgroundColor: '#144103' },
+              }}
             >
               Pesquisar
             </Button>
           </Grid>
         </Grid>
-      </Box>
-      <Box width={{ xs: '95%', md: '80%' }}>
-        {loading ? (
-          <Box display="flex" justifyContent="center" marginTop={4}>
-            <CircularProgress />
-          </Box>
-        ) : error ? (
-          <Alert severity="error" style={{ marginTop: 16 }}>
-            {error}
-          </Alert>
-        ) : clients.length === 0 ? (
-          <Typography variant="h6" align="center" marginTop={2}>
-            Nenhum cliente encontrado
-          </Typography>
-        ) : (
-          <Grid container spacing={3} marginTop={1}>
-            {clients.map((client) => (
-              <Grid item xs={12} sm={6} md={4} key={client.id}>
-                <Link
-                  to={`/clients/${client.id}`}
-                  style={{ textDecoration: 'none' }}
+      </Paper>
+
+      {loading ? (
+        <Box display="flex" justifyContent="center" marginTop={4}>
+          <CircularProgress />
+        </Box>
+      ) : error ? (
+        <Alert severity="error" sx={{ marginTop: 2 }}>
+          {error}
+        </Alert>
+      ) : clients.length === 0 ? (
+        <Typography variant="h6" align="center" marginTop={2}>
+          Nenhum cliente encontrado
+        </Typography>
+      ) : (
+        <Grid container spacing={3} marginTop={1}>
+          {clients.map((client) => (
+            <Grid item xs={12} sm={6} md={4} key={client.id}>
+              <Link
+                to={`/clients/${client.id}`}
+                style={{ textDecoration: 'none' }}
+              >
+                <Card
+                  sx={{
+                    '&:hover': {
+                      backgroundColor: '#f0f0f0',
+                      cursor: 'pointer',
+                    },
+                    display: 'flex',
+                    flexDirection: 'column',
+                    height: '100%',
+                  }}
                 >
-                  <Card
+                  <CardActionArea
                     sx={{
-                      '&:hover': {
-                        backgroundColor: '#f0f0f0',
-                        cursor: 'pointer',
-                      },
+                      flexGrow: 1,
                       display: 'flex',
                       flexDirection: 'column',
-                      height: '100%',
                     }}
                   >
-                    <CardActionArea
-                      sx={{
-                        flexGrow: 1,
-                        display: 'flex',
-                        flexDirection: 'column',
-                      }}
-                    >
-                      <CardContent sx={{ flexGrow: 1 }}>
-                        <Typography variant="h6" component="div">
-                          {client.name}
-                        </Typography>
+                    <CardContent sx={{ flexGrow: 1 }}>
+                      <Typography variant="h6" component="div">
+                        {client.name}
+                      </Typography>
+                      <Typography color="textSecondary">
+                        Telefone: {client.phone}
+                      </Typography>
+                      {client.address && client.address.neighborhood && (
                         <Typography color="textSecondary">
-                          Telefone: {client.phone}
+                          {client.address.neighborhood.name} -{' '}
+                          {client.address.neighborhood.city}/
+                          {client.address.neighborhood.state}
                         </Typography>
-                        {client.address && client.address.neighborhood && (
-                          <Typography color="textSecondary">
-                            {client.address.neighborhood.name} -{' '}
-                            {client.address.neighborhood.city}/
-                            {client.address.neighborhood.state}
-                          </Typography>
+                      )}
+                      <Typography color="textSecondary">
+                        Produção:
+                        {client.productions && client.productions.length > 0 ? (
+                          <ul>
+                            {client.productions.map((production) => (
+                              <li key={production.id}>
+                                {production.type}
+                                {production.custom_type &&
+                                  ` (${production.custom_type})`}
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          'Não possui'
                         )}
-                        <Typography color="textSecondary">
-                          Produção:
-                          {client.productions &&
-                          client.productions.length > 0 ? (
-                            <ul>
-                              {client.productions.map((production) => (
-                                <li key={production.id}>
-                                  {production.type}
-                                  {production.custom_type &&
-                                    ` (${production.custom_type})`}
-                                </li>
-                              ))}
-                            </ul>
-                          ) : (
-                            'Não possui'
-                          )}
-                        </Typography>
-                      </CardContent>
-                    </CardActionArea>
-                  </Card>
-                </Link>
-              </Grid>
-            ))}
-          </Grid>
-        )}
-      </Box>
+                      </Typography>
+                    </CardContent>
+                  </CardActionArea>
+                </Card>
+              </Link>
+            </Grid>
+          ))}
+        </Grid>
+      )}
     </Box>
   );
 };

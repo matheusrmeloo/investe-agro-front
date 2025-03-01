@@ -4,6 +4,7 @@ import {
   Typography,
   CircularProgress,
   Paper,
+  Grid,
   List,
   ListItem,
   ListItemText,
@@ -381,191 +382,202 @@ const ClientDetails: React.FC = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        padding={3}
-        bgcolor="#f5f5f5"
-        minHeight="100vh"
-      >
-        <Typography variant="h4" gutterBottom color="primary">
+      <Box sx={{ flexGrow: 1, padding: 3 }}>
+        <Typography
+          variant="h4"
+          gutterBottom
+          sx={{ color: '#1e5f05', textAlign: 'center' }}
+        >
           Detalhes do Cliente
         </Typography>
-        <Paper
-          elevation={3}
-          style={{ padding: 20, width: '80%', maxWidth: 600 }}
-        >
-          <Typography variant="h6" gutterBottom color="secondary">
+
+        <Paper sx={{ padding: 3, marginBottom: 3 }}>
+          <Typography variant="h6" gutterBottom sx={{ color: '#1e5f05' }}>
             {client.name}
           </Typography>
-          <List>
-            <ListItem>
-              <ListItemText
-                primary="CPF"
-                secondary={formatCpf(client.document_number)}
-              />
-            </ListItem>
-            <ListItem>
-              <ListItemText
-                primary="Telefone"
-                secondary={formatPhone(client.phone)}
-              />
-            </ListItem>
-            <ListItem>
-              <ListItemText primary="Email" secondary={client.email} />
-            </ListItem>
-            <ListItem>
-              <ListItemText
-                primary="Data de Nascimento"
-                secondary={formatDate(client.birth_date)}
-              />
-            </ListItem>
-            <ListItem>
-              <ListItemText
-                primary="Status Social"
-                secondary={client.social_status}
-              />
-            </ListItem>
-            <ListItem>
-              <ListItemText
-                primary="Possui CAR"
-                secondary={client.car ? 'Sim' : 'Não'}
-              />
-            </ListItem>
-            <ListItem>
-              <ListItemText
-                primary="Possui CAF/DAP"
-                secondary={client.caf_dap ? 'Sim' : 'Não'}
-              />
-            </ListItem>
-            {client.caf_dap && client.caf_dap_number && (
-              <ListItem>
-                <ListItemText
-                  primary="Número do CAF/DAP"
-                  secondary={client.caf_dap_number}
-                />
-              </ListItem>
-            )}
-            {client.address && (
-              <ListItem>
-                <ListItemText
-                  primary="Endereço"
-                  secondary={
-                    <>
-                      {client.address.street}, {client.address.number},{' '}
-                      {client.address.complement} - CEP: {client.address.cep}
-                      <br />
-                      {client.address.neighborhood.name} -{' '}
-                      {client.address.neighborhood.city}/
-                      {client.address.neighborhood.state}
-                    </>
-                  }
-                />
-              </ListItem>
-            )}
 
-            <ListItem
-              style={{ flexDirection: 'column', alignItems: 'flex-start' }}
-            >
-              <ListItemText primary="Cônjuge(s)" />
-              {client.spouses && client.spouses.length > 0 ? (
-                <List>
-                  {client.spouses.map((spouse) => (
-                    <ListItem key={spouse.id}>
-                      <ListItemText
-                        primary={spouse.name}
-                        secondary={`CPF: ${formatCpf(spouse.document_number)}, Telefone: ${formatPhone(spouse.phone)}, Data de Nascimento: ${formatDate(spouse.birth_date)}`}
-                      />
-                    </ListItem>
-                  ))}
-                </List>
-              ) : (
-                <Typography>Não possui</Typography>
-              )}
-            </ListItem>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={6}>
+              <List>
+                <ListItem>
+                  <ListItemText
+                    primary="CPF"
+                    secondary={formatCpf(client.document_number)}
+                  />
+                </ListItem>
+                <ListItem>
+                  <ListItemText
+                    primary="Telefone"
+                    secondary={formatPhone(client.phone)}
+                  />
+                </ListItem>
+                <ListItem>
+                  <ListItemText primary="Email" secondary={client.email} />
+                </ListItem>
+                <ListItem>
+                  <ListItemText
+                    primary="Data de Nascimento"
+                    secondary={formatDate(client.birth_date)}
+                  />
+                </ListItem>
+                <ListItem>
+                  <ListItemText
+                    primary="Status Social"
+                    secondary={client.social_status}
+                  />
+                </ListItem>
+              </List>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <List>
+                <ListItem>
+                  <ListItemText
+                    primary="Possui CAR"
+                    secondary={client.car ? 'Sim' : 'Não'}
+                  />
+                </ListItem>
+                <ListItem>
+                  <ListItemText
+                    primary="Possui CAF/DAP"
+                    secondary={client.caf_dap ? 'Sim' : 'Não'}
+                  />
+                </ListItem>
+                {client.caf_dap && client.caf_dap_number && (
+                  <ListItem>
+                    <ListItemText
+                      primary="Número do CAF/DAP"
+                      secondary={client.caf_dap_number}
+                    />
+                  </ListItem>
+                )}
+                {client.address && (
+                  <ListItem>
+                    <ListItemText
+                      primary="Endereço"
+                      secondary={
+                        <>
+                          {client.address.street}, {client.address.number},{' '}
+                          {client.address.complement} - CEP:{' '}
+                          {client.address.cep}
+                          <br />
+                          {client.address.neighborhood.name} -{' '}
+                          {client.address.neighborhood.city}/
+                          {client.address.neighborhood.state}
+                        </>
+                      }
+                    />
+                  </ListItem>
+                )}
+              </List>
+            </Grid>
+          </Grid>
 
-            <ListItem
-              style={{ flexDirection: 'column', alignItems: 'flex-start' }}
-            >
-              <ListItemText primary="Produção" />
-              {client.productions && client.productions.length > 0 ? (
-                <List>
-                  {client.productions.map((production) => (
-                    <ListItem key={production.id}>
-                      <ListItemText
-                        primary={`- ${titleCase(production.type)}`}
-                        secondary={
-                          production.custom_type &&
-                          `Tipo Customizado: ${titleCase(production.custom_type)}`
-                        }
-                      />
-                    </ListItem>
-                  ))}
-                </List>
-              ) : (
-                <Typography>Não possui</Typography>
-              )}
-            </ListItem>
-            <ListItem>
-              <Button
-                variant="outlined"
-                onClick={handleClickOpenModal}
-                color="primary"
-              >
-                Adicionar Observação
-              </Button>
-            </ListItem>
-            <Typography
-              variant="h6"
-              gutterBottom
-              style={{ marginTop: 16 }}
-              color="secondary"
-            >
-              Observações
-            </Typography>
-            {loadingObservations ? (
-              <Box display="flex" justifyContent="center">
-                <CircularProgress color="primary" />
-              </Box>
-            ) : (
-              <TableContainer component={Paper}>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Observação</TableCell>
-                      <TableCell>Data</TableCell>
-                      <TableCell>Ações</TableCell>
+          <Typography
+            variant="h6"
+            gutterBottom
+            sx={{ color: '#1e5f05', mt: 2 }}
+          >
+            Cônjuge(s)
+          </Typography>
+          {client.spouses && client.spouses.length > 0 ? (
+            <List>
+              {client.spouses.map((spouse) => (
+                <ListItem key={spouse.id}>
+                  <ListItemText
+                    primary={spouse.name}
+                    secondary={`CPF: ${formatCpf(spouse.document_number)}, Telefone: ${formatPhone(spouse.phone)}, Data de Nascimento: ${formatDate(spouse.birth_date)}`}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          ) : (
+            <Typography>Não possui</Typography>
+          )}
+
+          <Typography
+            variant="h6"
+            gutterBottom
+            sx={{ color: '#1e5f05', mt: 2 }}
+          >
+            Produção
+          </Typography>
+          {client.productions && client.productions.length > 0 ? (
+            <List>
+              {client.productions.map((production) => (
+                <ListItem key={production.id}>
+                  <ListItemText
+                    primary={`- ${titleCase(production.type)}`}
+                    secondary={
+                      production.custom_type &&
+                      `Tipo Customizado: ${titleCase(production.custom_type)}`
+                    }
+                  />
+                </ListItem>
+              ))}
+            </List>
+          ) : (
+            <Typography>Não possui</Typography>
+          )}
+
+          <Button
+            variant="outlined"
+            onClick={handleClickOpenModal}
+            sx={{ mt: 2, color: '#1e5f05', borderColor: '#1e5f05' }}
+          >
+            Adicionar Observação
+          </Button>
+
+          <Typography
+            variant="h6"
+            gutterBottom
+            sx={{ color: '#1e5f05', mt: 2 }}
+          >
+            Observações
+          </Typography>
+          {loadingObservations ? (
+            <Box display="flex" justifyContent="center">
+              <CircularProgress color="primary" />
+            </Box>
+          ) : (
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: 'bold', color: '#1e5f05' }}>
+                      Observação
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', color: '#1e5f05' }}>
+                      Data
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', color: '#1e5f05' }}>
+                      Ações
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {observations.map((observation) => (
+                    <TableRow key={observation.id}>
+                      <TableCell>{observation.text}</TableCell>
+                      <TableCell>
+                        {new Date(observation.created_at).toLocaleString()}
+                      </TableCell>
+                      <TableCell>
+                        <IconButton
+                          onClick={() =>
+                            handleDeleteObservation(observation.id)
+                          }
+                          color="secondary"
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </TableCell>
                     </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {observations.map((observation) => (
-                      <TableRow key={observation.id}>
-                        <TableCell>{observation.text}</TableCell>
-                        <TableCell>
-                          {new Date(observation.created_at).toLocaleString()}
-                        </TableCell>
-                        <TableCell>
-                          <IconButton
-                            onClick={() =>
-                              handleDeleteObservation(observation.id)
-                            }
-                            color="secondary"
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            )}
-            {renderPaginationControls()}
-          </List>
-          <Link to="/clients" style={{ color: theme.palette.primary.main }}>
-            Voltar
-          </Link>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
+          {renderPaginationControls()}
         </Paper>
 
         <Dialog open={openModal} onClose={handleCloseModal}>
@@ -578,17 +590,17 @@ const ClientDetails: React.FC = () => {
               fullWidth
               value={newObservation}
               onChange={(e) => setNewObservation(e.target.value)}
-              style={{ marginTop: '8px' }}
+              sx={{ mt: 2 }}
             />
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleCloseModal} color="secondary">
+            <Button onClick={handleCloseModal} sx={{ color: '#1e5f05' }}>
               Cancelar
             </Button>
             <Button
               onClick={handleAddObservation}
               disabled={loadingObservation}
-              color="primary"
+              sx={{ color: '#1e5f05' }}
             >
               {loadingObservation ? (
                 <CircularProgress size={24} />
@@ -598,6 +610,7 @@ const ClientDetails: React.FC = () => {
             </Button>
           </DialogActions>
         </Dialog>
+
         <Snackbar
           open={snackbarOpen}
           autoHideDuration={6000}
@@ -612,6 +625,12 @@ const ClientDetails: React.FC = () => {
             {snackbarMessage}
           </Alert>
         </Snackbar>
+
+        <Box sx={{ mt: 2 }}>
+          <Link to="/clients" style={{ color: '#1e5f05' }}>
+            Voltar
+          </Link>
+        </Box>
       </Box>
     </ThemeProvider>
   );

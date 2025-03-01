@@ -211,7 +211,11 @@ const ListOperations: React.FC = () => {
 
   return (
     <Box sx={{ flexGrow: 1, padding: 3 }}>
-      <Typography variant="h4" gutterBottom sx={{ color: '#1e5f05' }}>
+      <Typography
+        variant="h4"
+        gutterBottom
+        sx={{ color: '#1e5f05', textAlign: 'center' }}
+      >
         Operações
       </Typography>
 

@@ -14,6 +14,7 @@ import {
   FormControlLabel,
   Grid,
   CircularProgress,
+  Paper,
 } from '@mui/material';
 import api from '../api/axiosConfig';
 import axios from 'axios';
@@ -325,345 +326,397 @@ const RegisterClient: React.FC = () => {
   };
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      padding={3}
-      bgcolor="#f5f5f5"
-      height="100vh"
-    >
-      <Typography variant="h4" gutterBottom>
+    <Box sx={{ flexGrow: 1, padding: 3 }}>
+      <Typography
+        variant="h4"
+        gutterBottom
+        sx={{ color: '#1e5f05', textAlign: 'center' }}
+      >
         Cadastro de Cliente
       </Typography>
-      <Box
-        component="form"
-        onSubmit={handleSubmit}
-        bgcolor="#ffffff"
-        padding={4}
-        borderRadius={4}
-        boxShadow={3}
-        width={{ xs: '90%', sm: '600px' }}
-      >
-        {error && <Alert severity="error">{error}</Alert>}
-        {success && <Alert severity="success">{success}</Alert>}
 
-        <TextField
-          fullWidth
-          label="Nome"
-          name="name"
-          value={formData.name}
-          onChange={handleInputChange}
-          margin="normal"
-          required
-        />
-        <TextField
-          fullWidth
-          label="CPF"
-          name="document_number"
-          value={formData.document_number}
-          onChange={handleInputChange}
-          margin="normal"
-          required
-        />
-        <TextField
-          fullWidth
-          label="Telefone"
-          name="phone"
-          value={formData.phone}
-          onChange={handleInputChange}
-          margin="normal"
-          required
-        />
-        <TextField
-          fullWidth
-          label="E-mail"
-          name="email"
-          value={formData.email}
-          onChange={handleInputChange}
-          margin="normal"
-          required
-        />
-        <TextField
-          fullWidth
-          label="Data de Nascimento"
-          name="birth_date"
-          type="date"
-          value={formData.birth_date}
-          onChange={handleInputChange}
-          InputLabelProps={{ shrink: true }}
-          margin="normal"
-          required
-        />
-
-        <FormControl fullWidth margin="normal" required>
-          <InputLabel>Status Social</InputLabel>
-          <Select
-            value={formData.social_status}
-            onChange={handleSocialStatusChange}
-          >
-            <MenuItem value="solteiro">Solteiro</MenuItem>
-            <MenuItem value="casado">Casado</MenuItem>
-            <MenuItem value="divorciado">Divorciado</MenuItem>
-            <MenuItem value="viuvo">Viúvo</MenuItem>
-          </Select>
-        </FormControl>
-
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={formData.hasSpouse}
-              onChange={handleCheckboxChange}
-            />
-          }
-          label="Possui cônjuge?"
-        />
-
-        {formData.hasSpouse && (
-          <Box>
-            <Typography variant="h6" gutterBottom>
-              Cônjuge
-            </Typography>
-            {formData.spouses.map((spouse, index) => (
-              <Box key={index} marginBottom={2}>
-                <TextField
-                  fullWidth
-                  label="Nome"
-                  value={spouse.name}
-                  onChange={(e) =>
-                    handleSpouseChange(index, 'name', e.target.value)
-                  }
-                  margin="normal"
-                  required
-                />
-                <TextField
-                  fullWidth
-                  label="CPF"
-                  value={spouse.document_number}
-                  onChange={(e) =>
-                    handleSpouseChange(index, 'document_number', e.target.value)
-                  }
-                  margin="normal"
-                  required
-                />
-                <TextField
-                  fullWidth
-                  label="Telefone"
-                  value={spouse.phone}
-                  onChange={(e) =>
-                    handleSpouseChange(index, 'phone', e.target.value)
-                  }
-                  margin="normal"
-                  required
-                />
-                <TextField
-                  fullWidth
-                  label="Data de Nascimento"
-                  type="date"
-                  value={spouse.birth_date}
-                  onChange={(e) =>
-                    handleSpouseChange(index, 'birth_date', e.target.value)
-                  }
-                  InputLabelProps={{ shrink: true }}
-                  margin="normal"
-                  required
-                />
-              </Box>
-            ))}
-          </Box>
+      <Paper sx={{ padding: 3, marginBottom: 3 }}>
+        {error && (
+          <Alert severity="error" sx={{ marginBottom: 2 }}>
+            {error}
+          </Alert>
+        )}
+        {success && (
+          <Alert severity="success" sx={{ marginBottom: 2 }}>
+            {success}
+          </Alert>
         )}
 
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={formData.car}
-              onChange={(event) =>
-                setFormData((prevData) => ({
-                  ...prevData,
-                  car: event.target.checked,
-                }))
-              }
-            />
-          }
-          label="Possui CAR?"
-        />
-
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={formData.caf_dap}
-              onChange={(event) =>
-                setFormData((prevData) => ({
-                  ...prevData,
-                  caf_dap: event.target.checked,
-                  caf_dap_number: event.target.checked
-                    ? prevData.caf_dap_number
-                    : '', // Limpa o número se o checkbox for desmarcado
-                }))
-              }
-            />
-          }
-          label="Possui CAF/DAP?"
-        />
-
-        {formData.caf_dap && (
-          <TextField
-            fullWidth
-            label="Número do CAF/DAP"
-            name="caf_dap_number"
-            value={formData.caf_dap_number}
-            onChange={handleInputChange}
-            margin="normal"
-            required
-          />
-        )}
-
-        <Typography variant="h6" gutterBottom>
-          Endereço
-        </Typography>
         <Grid container spacing={2}>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={6}>
             <TextField
               fullWidth
-              label="CEP"
-              name="cep"
-              value={formData.address.cep}
-              onChange={handleCepChange}
+              label="Nome"
+              name="name"
+              value={formData.name}
+              onChange={handleInputChange}
               margin="normal"
               required
             />
           </Grid>
-          <Grid item xs={12} md={8}>
+          <Grid item xs={12} md={6}>
             <TextField
               fullWidth
-              label="Rua"
-              name="street"
-              value={formData.address.street}
-              onChange={handleAddressChange}
+              label="CPF"
+              name="document_number"
+              value={formData.document_number}
+              onChange={handleInputChange}
               margin="normal"
               required
             />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={6}>
             <TextField
               fullWidth
-              label="Número"
-              name="number"
-              value={formData.address.number}
-              onChange={handleAddressChange}
+              label="Telefone"
+              name="phone"
+              value={formData.phone}
+              onChange={handleInputChange}
               margin="normal"
               required
             />
           </Grid>
-          <Grid item xs={12} md={8}>
+          <Grid item xs={12} md={6}>
             <TextField
               fullWidth
-              label="Complemento"
-              name="complement"
-              value={formData.address.complement || ''}
-              onChange={handleAddressChange}
+              label="E-mail"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
               margin="normal"
+              required
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} md={6}>
+            <TextField
+              fullWidth
+              label="Data de Nascimento"
+              name="birth_date"
+              type="date"
+              value={formData.birth_date}
+              onChange={handleInputChange}
+              InputLabelProps={{ shrink: true }}
+              margin="normal"
+              required
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
             <FormControl fullWidth margin="normal" required>
-              <InputLabel>Bairro</InputLabel>
-              {loadingNeighborhoods ? (
-                <CircularProgress />
-              ) : (
-                <Select
-                  value={formData.address.neighborhood.id}
-                  onChange={handleNeighborhoodChange}
-                >
-                  {neighborhoods.map((neighborhood) => (
-                    <MenuItem value={neighborhood.id} key={neighborhood.id}>
-                      {neighborhood.name} - {neighborhood.city}/
-                      {neighborhood.state}
-                    </MenuItem>
-                  ))}
-                </Select>
-              )}
-            </FormControl>
-          </Grid>
-        </Grid>
-
-        <Typography variant="h6" gutterBottom>
-          Produções
-        </Typography>
-        {formData.productions.map((production, index) => (
-          <Box key={index} display="flex" alignItems="center" marginBottom={2}>
-            <FormControl style={{ marginRight: 16, flex: 1 }}>
-              <InputLabel>Tipo de Produção</InputLabel>
+              <InputLabel>Status Social</InputLabel>
               <Select
-                value={production.type}
-                onChange={(e) =>
-                  handleProductionTypeChange(
-                    index,
-                    e as SelectChangeEvent<
-                      | 'milho'
-                      | 'pecuaria'
-                      | 'mandioca'
-                      | 'fumo'
-                      | 'batata doce'
-                      | 'trator'
-                      | 'outros'
-                    >,
-                  )
-                }
-                label="Tipo de Produção"
+                value={formData.social_status}
+                onChange={handleSocialStatusChange}
               >
-                <MenuItem value="milho">Milho</MenuItem>
-                <MenuItem value="pecuaria">Pecuária</MenuItem>
-                <MenuItem value="mandioca">Mandioca</MenuItem>
-                <MenuItem value="fumo">Fumo</MenuItem>
-                <MenuItem value="batata doce">Batata Doce</MenuItem>
-                <MenuItem value="trator">Trator</MenuItem>
-                <MenuItem value="outros">Outros</MenuItem>
+                <MenuItem value="solteiro">Solteiro</MenuItem>
+                <MenuItem value="casado">Casado</MenuItem>
+                <MenuItem value="divorciado">Divorciado</MenuItem>
+                <MenuItem value="viuvo">Viúvo</MenuItem>
               </Select>
             </FormControl>
+          </Grid>
 
-            {production.type === 'outros' && (
+          <Grid item xs={12}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={formData.hasSpouse}
+                  onChange={handleCheckboxChange}
+                />
+              }
+              label="Possui cônjuge?"
+            />
+          </Grid>
+
+          {formData.hasSpouse && (
+            <Grid item xs={12}>
+              <Typography variant="h6" gutterBottom>
+                Cônjuge
+              </Typography>
+              {formData.spouses.map((spouse, index) => (
+                <Box key={index} marginBottom={2}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} md={6}>
+                      <TextField
+                        fullWidth
+                        label="Nome"
+                        value={spouse.name}
+                        onChange={(e) =>
+                          handleSpouseChange(index, 'name', e.target.value)
+                        }
+                        margin="normal"
+                        required
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                      <TextField
+                        fullWidth
+                        label="CPF"
+                        value={spouse.document_number}
+                        onChange={(e) =>
+                          handleSpouseChange(
+                            index,
+                            'document_number',
+                            e.target.value,
+                          )
+                        }
+                        margin="normal"
+                        required
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                      <TextField
+                        fullWidth
+                        label="Telefone"
+                        value={spouse.phone}
+                        onChange={(e) =>
+                          handleSpouseChange(index, 'phone', e.target.value)
+                        }
+                        margin="normal"
+                        required
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                      <TextField
+                        fullWidth
+                        label="Data de Nascimento"
+                        type="date"
+                        value={spouse.birth_date}
+                        onChange={(e) =>
+                          handleSpouseChange(
+                            index,
+                            'birth_date',
+                            e.target.value,
+                          )
+                        }
+                        InputLabelProps={{ shrink: true }}
+                        margin="normal"
+                        required
+                      />
+                    </Grid>
+                  </Grid>
+                </Box>
+              ))}
+            </Grid>
+          )}
+
+          <Grid item xs={12}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={formData.car}
+                  onChange={(event) =>
+                    setFormData((prevData) => ({
+                      ...prevData,
+                      car: event.target.checked,
+                    }))
+                  }
+                />
+              }
+              label="Possui CAR?"
+            />
+          </Grid>
+
+          <Grid item xs={12}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={formData.caf_dap}
+                  onChange={(event) =>
+                    setFormData((prevData) => ({
+                      ...prevData,
+                      caf_dap: event.target.checked,
+                      caf_dap_number: event.target.checked
+                        ? prevData.caf_dap_number
+                        : '',
+                    }))
+                  }
+                />
+              }
+              label="Possui CAF/DAP?"
+            />
+          </Grid>
+
+          {formData.caf_dap && (
+            <Grid item xs={12}>
               <TextField
-                label="Especifique o tipo"
-                value={production.custom_type || ''}
-                onChange={(e) =>
-                  handleCustomProductionChange(index, e.target.value)
-                }
-                style={{ marginRight: 16, flex: 2 }}
+                fullWidth
+                label="Número do CAF/DAP"
+                name="caf_dap_number"
+                value={formData.caf_dap_number}
+                onChange={handleInputChange}
+                margin="normal"
                 required
               />
-            )}
+            </Grid>
+          )}
 
+          <Grid item xs={12}>
+            <Typography variant="h6" gutterBottom>
+              Endereço
+            </Typography>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={4}>
+                <TextField
+                  fullWidth
+                  label="CEP"
+                  name="cep"
+                  value={formData.address.cep}
+                  onChange={handleCepChange}
+                  margin="normal"
+                  required
+                />
+              </Grid>
+              <Grid item xs={12} md={8}>
+                <TextField
+                  fullWidth
+                  label="Rua"
+                  name="street"
+                  value={formData.address.street}
+                  onChange={handleAddressChange}
+                  margin="normal"
+                  required
+                />
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <TextField
+                  fullWidth
+                  label="Número"
+                  name="number"
+                  value={formData.address.number}
+                  onChange={handleAddressChange}
+                  margin="normal"
+                  required
+                />
+              </Grid>
+              <Grid item xs={12} md={8}>
+                <TextField
+                  fullWidth
+                  label="Complemento"
+                  name="complement"
+                  value={formData.address.complement || ''}
+                  onChange={handleAddressChange}
+                  margin="normal"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <FormControl fullWidth margin="normal" required>
+                  <InputLabel>Bairro</InputLabel>
+                  {loadingNeighborhoods ? (
+                    <CircularProgress />
+                  ) : (
+                    <Select
+                      value={formData.address.neighborhood.id}
+                      onChange={handleNeighborhoodChange}
+                    >
+                      {neighborhoods.map((neighborhood) => (
+                        <MenuItem value={neighborhood.id} key={neighborhood.id}>
+                          {neighborhood.name} - {neighborhood.city}/
+                          {neighborhood.state}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  )}
+                </FormControl>
+              </Grid>
+            </Grid>
+          </Grid>
+
+          <Grid item xs={12}>
+            <Typography variant="h6" gutterBottom>
+              Produções
+            </Typography>
+            {formData.productions.map((production, index) => (
+              <Box
+                key={index}
+                display="flex"
+                alignItems="center"
+                marginBottom={2}
+              >
+                <FormControl style={{ marginRight: 16, flex: 1 }}>
+                  <InputLabel>Tipo de Produção</InputLabel>
+                  <Select
+                    value={production.type}
+                    onChange={(e) =>
+                      handleProductionTypeChange(
+                        index,
+                        e as SelectChangeEvent<
+                          | 'milho'
+                          | 'pecuaria'
+                          | 'mandioca'
+                          | 'fumo'
+                          | 'batata doce'
+                          | 'trator'
+                          | 'outros'
+                        >,
+                      )
+                    }
+                    label="Tipo de Produção"
+                  >
+                    <MenuItem value="milho">Milho</MenuItem>
+                    <MenuItem value="pecuaria">Pecuária</MenuItem>
+                    <MenuItem value="mandioca">Mandioca</MenuItem>
+                    <MenuItem value="fumo">Fumo</MenuItem>
+                    <MenuItem value="batata doce">Batata Doce</MenuItem>
+                    <MenuItem value="trator">Trator</MenuItem>
+                    <MenuItem value="outros">Outros</MenuItem>
+                  </Select>
+                </FormControl>
+
+                {production.type === 'outros' && (
+                  <TextField
+                    label="Especifique o tipo"
+                    value={production.custom_type || ''}
+                    onChange={(e) =>
+                      handleCustomProductionChange(index, e.target.value)
+                    }
+                    style={{ marginRight: 16, flex: 2 }}
+                    required
+                  />
+                )}
+
+                <Button
+                  variant="outlined"
+                  color="error"
+                  size="small"
+                  onClick={() => handleRemoveProduction(index)}
+                  style={{ height: '40px' }}
+                >
+                  Remover
+                </Button>
+              </Box>
+            ))}
             <Button
               variant="outlined"
-              color="error"
-              size="small"
-              onClick={() => handleRemoveProduction(index)}
-              style={{ height: '40px' }}
+              color="primary"
+              onClick={handleAddProduction}
+              style={{ marginBottom: 16 }}
             >
-              Remover
+              Adicionar Produção
             </Button>
-          </Box>
-        ))}
-        <Button
-          variant="outlined"
-          color="primary"
-          onClick={handleAddProduction}
-          style={{ marginBottom: 16 }}
-        >
-          Adicionar Produção
-        </Button>
+          </Grid>
 
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          color="primary"
-          style={{ marginTop: '16px' }}
-        >
-          Cadastrar Cliente
-        </Button>
-      </Box>
+          <Grid item xs={12}>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              sx={{
+                marginTop: '16px',
+                backgroundColor: '#1e5f05',
+                '&:hover': { backgroundColor: '#144103' },
+              }}
+            >
+              Cadastrar Cliente
+            </Button>
+          </Grid>
+        </Grid>
+      </Paper>
     </Box>
   );
 };

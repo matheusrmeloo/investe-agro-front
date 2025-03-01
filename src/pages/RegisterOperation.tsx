@@ -12,6 +12,7 @@ import {
   SelectChangeEvent,
   Grid,
   CircularProgress,
+  Paper,
 } from '@mui/material';
 import api from '../api/axiosConfig';
 
@@ -192,186 +193,223 @@ const RegisterOperation: React.FC = () => {
   }
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      padding={3}
-      bgcolor="#f5f5f5"
-      height="100%"
-    >
-      <Typography variant="h4" gutterBottom>
+    <Box sx={{ flexGrow: 1, padding: 3 }}>
+      <Typography
+        variant="h4"
+        gutterBottom
+        sx={{ color: '#1e5f05', textAlign: 'center' }}
+      >
         Registro de Operação
       </Typography>
-      <Box
-        component="form"
-        onSubmit={handleSubmit}
-        bgcolor="#ffffff"
-        padding={4}
-        borderRadius={4}
-        boxShadow={3}
-        width={{ xs: '90%', sm: '600px' }}
-      >
-        {error && <Alert severity="error">{error}</Alert>}
-        {success && <Alert severity="success">{success}</Alert>}
 
-        <FormControl fullWidth margin="normal" required>
-          <InputLabel>Cliente</InputLabel>
-          <Select value={operationData.client.id} onChange={handleClientChange}>
-            {clients.map((client) => (
-              <MenuItem key={client.id} value={client.id}>
-                {client.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+      <Paper sx={{ padding: 3, marginBottom: 3 }}>
+        {error && (
+          <Alert severity="error" sx={{ marginBottom: 2 }}>
+            {error}
+          </Alert>
+        )}
+        {success && (
+          <Alert severity="success" sx={{ marginBottom: 2 }}>
+            {success}
+          </Alert>
+        )}
 
-        <FormControl
-          fullWidth
-          margin="normal"
-          required
-          disabled={!operationData.client.id}
-        >
-          <InputLabel>Produção</InputLabel>
-          <Select
-            value={operationData.production.id}
-            onChange={handleProductionChange}
-          >
-            {productions.map((production) => (
-              <MenuItem key={production.id} value={production.id}>
-                {production.type}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={6}>
+            <FormControl fullWidth margin="normal" required>
+              <InputLabel>Cliente</InputLabel>
+              <Select
+                value={operationData.client.id}
+                onChange={handleClientChange}
+              >
+                {clients.map((client) => (
+                  <MenuItem key={client.id} value={client.id}>
+                    {client.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
 
-        <TextField
-          fullWidth
-          label="Observação"
-          name="observation"
-          value={operationData.observation || ''}
-          onChange={handleInputChange}
-          margin="normal"
-          multiline
-          rows={2}
-        />
+          <Grid item xs={12} md={6}>
+            <FormControl
+              fullWidth
+              margin="normal"
+              required
+              disabled={!operationData.client.id}
+            >
+              <InputLabel>Produção</InputLabel>
+              <Select
+                value={operationData.production.id}
+                onChange={handleProductionChange}
+              >
+                {productions.map((production) => (
+                  <MenuItem key={production.id} value={production.id}>
+                    {production.type}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
 
-        <TextField
-          fullWidth
-          label="Área de Terra"
-          name="land_area"
-          type="number"
-          value={
-            operationData.land_area !== undefined ? operationData.land_area : ''
-          }
-          onChange={handleInputChange}
-          margin="normal"
-        />
-        <FormControl fullWidth margin="normal">
-          <InputLabel>Unidade de Medida (Área de Terra)</InputLabel>
-          <Select
-            value={operationData.measurement_land_area || ''}
-            onChange={(e) =>
-              handleMeasurementChange(e, 'measurement_land_area')
-            }
-          >
-            <MenuItem value="m2">m2</MenuItem>
-            <MenuItem value="tarefa">Tarefa</MenuItem>
-            <MenuItem value="hectare">Hectare</MenuItem>
-          </Select>
-        </FormControl>
+          <Grid item xs={12} md={6}>
+            <TextField
+              fullWidth
+              label="Área de Terra"
+              name="land_area"
+              type="number"
+              value={
+                operationData.land_area !== undefined
+                  ? operationData.land_area
+                  : ''
+              }
+              onChange={handleInputChange}
+              margin="normal"
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <FormControl fullWidth margin="normal">
+              <InputLabel>Unidade de Medida (Área de Terra)</InputLabel>
+              <Select
+                value={operationData.measurement_land_area || ''}
+                onChange={(e) =>
+                  handleMeasurementChange(e, 'measurement_land_area')
+                }
+              >
+                <MenuItem value="m2">m2</MenuItem>
+                <MenuItem value="tarefa">Tarefa</MenuItem>
+                <MenuItem value="hectare">Hectare</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
 
-        <TextField
-          fullWidth
-          label="Área de Produção"
-          name="production_area"
-          type="number"
-          value={
-            operationData.production_area !== undefined
-              ? operationData.production_area
-              : ''
-          }
-          onChange={handleInputChange}
-          margin="normal"
-        />
-        <FormControl fullWidth margin="normal">
-          <InputLabel>Unidade de Medida (Área de Produção)</InputLabel>
-          <Select
-            value={operationData.measurement_production_area || ''}
-            onChange={(e) =>
-              handleMeasurementChange(e, 'measurement_production_area')
-            }
-          >
-            <MenuItem value="m2">m2</MenuItem>
-            <MenuItem value="tarefa">Tarefa</MenuItem>
-            <MenuItem value="hectare">Hectare</MenuItem>
-          </Select>
-        </FormControl>
+          <Grid item xs={12} md={6}>
+            <TextField
+              fullWidth
+              label="Área de Produção"
+              name="production_area"
+              type="number"
+              value={
+                operationData.production_area !== undefined
+                  ? operationData.production_area
+                  : ''
+              }
+              onChange={handleInputChange}
+              margin="normal"
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <FormControl fullWidth margin="normal">
+              <InputLabel>Unidade de Medida (Área de Produção)</InputLabel>
+              <Select
+                value={operationData.measurement_production_area || ''}
+                onChange={(e) =>
+                  handleMeasurementChange(e, 'measurement_production_area')
+                }
+              >
+                <MenuItem value="m2">m2</MenuItem>
+                <MenuItem value="tarefa">Tarefa</MenuItem>
+                <MenuItem value="hectare">Hectare</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
 
-        <TextField
-          fullWidth
-          label="Área Arada"
-          name="plowed_area"
-          type="number"
-          value={
-            operationData.plowed_area !== undefined
-              ? operationData.plowed_area
-              : ''
-          }
-          onChange={handleInputChange}
-          margin="normal"
-        />
-        <FormControl fullWidth margin="normal">
-          <InputLabel>Unidade de Medida (Área Arada)</InputLabel>
-          <Select
-            value={operationData.measurement_plowed_area || ''}
-            onChange={(e) =>
-              handleMeasurementChange(e, 'measurement_plowed_area')
-            }
-          >
-            <MenuItem value="m2">m2</MenuItem>
-            <MenuItem value="tarefa">Tarefa</MenuItem>
-            <MenuItem value="hectare">Hectare</MenuItem>
-          </Select>
-        </FormControl>
+          <Grid item xs={12} md={6}>
+            <TextField
+              fullWidth
+              label="Área Arada"
+              name="plowed_area"
+              type="number"
+              value={
+                operationData.plowed_area !== undefined
+                  ? operationData.plowed_area
+                  : ''
+              }
+              onChange={handleInputChange}
+              margin="normal"
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <FormControl fullWidth margin="normal">
+              <InputLabel>Unidade de Medida (Área Arada)</InputLabel>
+              <Select
+                value={operationData.measurement_plowed_area || ''}
+                onChange={(e) =>
+                  handleMeasurementChange(e, 'measurement_plowed_area')
+                }
+              >
+                <MenuItem value="m2">m2</MenuItem>
+                <MenuItem value="tarefa">Tarefa</MenuItem>
+                <MenuItem value="hectare">Hectare</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
 
-        <TextField
-          fullWidth
-          label="Produção Agrícola"
-          name="agricultural_production"
-          type="number"
-          value={
-            operationData.agricultural_production !== undefined
-              ? operationData.agricultural_production
-              : ''
-          }
-          onChange={handleInputChange}
-          margin="normal"
-        />
-        <FormControl fullWidth margin="normal">
-          <InputLabel>Unidade de Medida (Produção Agrícola)</InputLabel>
-          <Select
-            value={operationData.measurement_agricultural_production || ''}
-            onChange={(e) =>
-              handleMeasurementChange(e, 'measurement_agricultural_production')
-            }
-          >
-            <MenuItem value="g">g</MenuItem>
-            <MenuItem value="kg">kg</MenuItem>
-            <MenuItem value="t">t</MenuItem>
-          </Select>
-        </FormControl>
+          <Grid item xs={12} md={6}>
+            <TextField
+              fullWidth
+              label="Produção Agrícola"
+              name="agricultural_production"
+              type="number"
+              value={
+                operationData.agricultural_production !== undefined
+                  ? operationData.agricultural_production
+                  : ''
+              }
+              onChange={handleInputChange}
+              margin="normal"
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <FormControl fullWidth margin="normal">
+              <InputLabel>Unidade de Medida (Produção Agrícola)</InputLabel>
+              <Select
+                value={operationData.measurement_agricultural_production || ''}
+                onChange={(e) =>
+                  handleMeasurementChange(
+                    e,
+                    'measurement_agricultural_production',
+                  )
+                }
+              >
+                <MenuItem value="g">g</MenuItem>
+                <MenuItem value="kg">kg</MenuItem>
+                <MenuItem value="t">t</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
 
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          color="primary"
-          style={{ marginTop: '16px' }}
-        >
-          Registrar Operação
-        </Button>
-      </Box>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              label="Observação"
+              name="observation"
+              value={operationData.observation || ''}
+              onChange={handleInputChange}
+              margin="normal"
+              multiline
+              rows={2}
+            />
+          </Grid>
+
+          <Grid item xs={12}>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              onClick={handleSubmit}
+              sx={{
+                marginTop: '16px',
+                backgroundColor: '#1e5f05',
+                '&:hover': { backgroundColor: '#144103' },
+              }}
+            >
+              Registrar Operação
+            </Button>
+          </Grid>
+        </Grid>
+      </Paper>
     </Box>
   );
 };
