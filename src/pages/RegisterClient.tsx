@@ -43,13 +43,13 @@ interface Spouse {
 
 interface Production {
   type:
-  | 'milho'
-  | 'pecuaria'
-  | 'mandioca'
-  | 'fumo'
-  | 'batata doce'
-  | 'trator'
-  | 'outros';
+    | 'milho'
+    | 'pecuaria'
+    | 'mandioca'
+    | 'fumo'
+    | 'batata doce'
+    | 'trator'
+    | 'outros';
   custom_type?: string;
 }
 
@@ -128,7 +128,8 @@ const RegisterClient: React.FC = () => {
         }
       } catch (err: any) {
         setError(
-          `Erro ao carregar bairros: ${err.response?.data?.message || err.message
+          `Erro ao carregar bairros: ${
+            err.response?.data?.message || err.message
           }`,
         );
       } finally {
@@ -185,13 +186,13 @@ const RegisterClient: React.FC = () => {
       hasSpouse: event.target.checked,
       spouses: event.target.checked
         ? [
-          {
-            name: '',
-            document_number: '',
-            phone: '',
-            birth_date: '',
-          },
-        ]
+            {
+              name: '',
+              document_number: '',
+              phone: '',
+              birth_date: '',
+            },
+          ]
         : [],
     }));
   };
@@ -495,7 +496,9 @@ const RegisterClient: React.FC = () => {
                 setFormData((prevData) => ({
                   ...prevData,
                   caf_dap: event.target.checked,
-                  caf_dap_number: event.target.checked ? prevData.caf_dap_number : '', // Limpa o número se o checkbox for desmarcado
+                  caf_dap_number: event.target.checked
+                    ? prevData.caf_dap_number
+                    : '', // Limpa o número se o checkbox for desmarcado
                 }))
               }
             />
@@ -514,7 +517,6 @@ const RegisterClient: React.FC = () => {
             required
           />
         )}
-
 
         <Typography variant="h6" gutterBottom>
           Endereço

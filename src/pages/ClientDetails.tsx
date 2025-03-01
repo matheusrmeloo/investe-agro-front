@@ -185,7 +185,8 @@ const ClientDetails: React.FC = () => {
         }
       } catch (err: any) {
         showSnackbar(
-          `Erro ao carregar detalhes do cliente: ${err.response?.data?.message || err.message
+          `Erro ao carregar detalhes do cliente: ${
+            err.response?.data?.message || err.message
           }`,
         );
       } finally {
@@ -211,7 +212,8 @@ const ClientDetails: React.FC = () => {
           }
         } catch (err: any) {
           showSnackbar(
-            `Erro ao carregar observações: ${err.response?.data?.message || err.message
+            `Erro ao carregar observações: ${
+              err.response?.data?.message || err.message
             }`,
           );
         } finally {
@@ -273,7 +275,8 @@ const ClientDetails: React.FC = () => {
       handleCloseModal();
     } catch (err: any) {
       showSnackbar(
-        `Erro ao adicionar observação: ${err.response?.data?.message || err.message
+        `Erro ao adicionar observação: ${
+          err.response?.data?.message || err.message
         }`,
         'error',
       );
@@ -302,7 +305,8 @@ const ClientDetails: React.FC = () => {
       }
     } catch (err: any) {
       showSnackbar(
-        `Erro ao excluir observação: ${err.response?.data?.message || err.message
+        `Erro ao excluir observação: ${
+          err.response?.data?.message || err.message
         }`,
         'error',
       );
@@ -397,10 +401,16 @@ const ClientDetails: React.FC = () => {
           </Typography>
           <List>
             <ListItem>
-              <ListItemText primary="CPF" secondary={formatCpf(client.document_number)} />
+              <ListItemText
+                primary="CPF"
+                secondary={formatCpf(client.document_number)}
+              />
             </ListItem>
             <ListItem>
-              <ListItemText primary="Telefone" secondary={formatPhone(client.phone)} />
+              <ListItemText
+                primary="Telefone"
+                secondary={formatPhone(client.phone)}
+              />
             </ListItem>
             <ListItem>
               <ListItemText primary="Email" secondary={client.email} />
@@ -418,14 +428,23 @@ const ClientDetails: React.FC = () => {
               />
             </ListItem>
             <ListItem>
-              <ListItemText primary="Possui CAR" secondary={client.car ? 'Sim' : 'Não'} />
+              <ListItemText
+                primary="Possui CAR"
+                secondary={client.car ? 'Sim' : 'Não'}
+              />
             </ListItem>
             <ListItem>
-              <ListItemText primary="Possui CAF/DAP" secondary={client.caf_dap ? 'Sim' : 'Não'} />
+              <ListItemText
+                primary="Possui CAF/DAP"
+                secondary={client.caf_dap ? 'Sim' : 'Não'}
+              />
             </ListItem>
             {client.caf_dap && client.caf_dap_number && (
               <ListItem>
-                <ListItemText primary="Número do CAF/DAP" secondary={client.caf_dap_number} />
+                <ListItemText
+                  primary="Número do CAF/DAP"
+                  secondary={client.caf_dap_number}
+                />
               </ListItem>
             )}
             {client.address && (
@@ -446,7 +465,9 @@ const ClientDetails: React.FC = () => {
               </ListItem>
             )}
 
-            <ListItem style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
+            <ListItem
+              style={{ flexDirection: 'column', alignItems: 'flex-start' }}
+            >
               <ListItemText primary="Cônjuge(s)" />
               {client.spouses && client.spouses.length > 0 ? (
                 <List>
@@ -464,7 +485,9 @@ const ClientDetails: React.FC = () => {
               )}
             </ListItem>
 
-            <ListItem style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
+            <ListItem
+              style={{ flexDirection: 'column', alignItems: 'flex-start' }}
+            >
               <ListItemText primary="Produção" />
               {client.productions && client.productions.length > 0 ? (
                 <List>

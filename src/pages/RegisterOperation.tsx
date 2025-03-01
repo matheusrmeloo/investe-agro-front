@@ -62,7 +62,8 @@ interface ApiResponse {
 }
 
 const RegisterOperation: React.FC = () => {
-  const [operationData, setOperationData] = useState<OperationData>(initialOperationData);
+  const [operationData, setOperationData] =
+    useState<OperationData>(initialOperationData);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [clients, setClients] = useState<Client[]>([]);
@@ -73,15 +74,22 @@ const RegisterOperation: React.FC = () => {
     const fetchClients = async () => {
       try {
         const response = await api.get<ApiResponse>('/clients');
-        if (response.data.status === 200 && Array.isArray(response.data.payload)) {
+        if (
+          response.data.status === 200 &&
+          Array.isArray(response.data.payload)
+        ) {
           setClients(response.data.payload);
         } else {
-          setError('Erro ao carregar clientes: Formato de resposta inesperado.');
+          setError(
+            'Erro ao carregar clientes: Formato de resposta inesperado.',
+          );
           setClients([]);
           console.error('Formato de resposta inesperado:', response.data);
         }
       } catch (err: any) {
-        setError(`Erro ao carregar clientes: ${err?.response?.data?.message || err.message}`);
+        setError(
+          `Erro ao carregar clientes: ${err?.response?.data?.message || err.message}`,
+        );
         console.error(err);
         setClients([]);
       } finally {
@@ -94,7 +102,9 @@ const RegisterOperation: React.FC = () => {
 
   useEffect(() => {
     if (operationData.client.id) {
-      const selectedClient = clients.find(client => client.id === operationData.client.id);
+      const selectedClient = clients.find(
+        (client) => client.id === operationData.client.id,
+      );
       if (selectedClient) {
         setProductions(selectedClient.productions);
       } else {
@@ -105,38 +115,50 @@ const RegisterOperation: React.FC = () => {
     }
   }, [operationData.client.id, clients]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
 
-    if (name === 'land_area' || name === 'production_area' || name === 'plowed_area') {
+    if (
+      name === 'land_area' ||
+      name === 'production_area' ||
+      name === 'plowed_area'
+    ) {
       const parsedValue = value === '' ? undefined : parseInt(value, 10);
-      setOperationData(prevData => ({ ...prevData, [name]: parsedValue }));
+      setOperationData((prevData) => ({ ...prevData, [name]: parsedValue }));
     } else if (name === 'agricultural_production') {
       const parsedValue = value === '' ? undefined : parseFloat(value);
-      setOperationData(prevData => ({ ...prevData, [name]: parsedValue }));
+      setOperationData((prevData) => ({ ...prevData, [name]: parsedValue }));
     } else {
-      setOperationData(prevData => ({ ...prevData, [name]: value }));
+      setOperationData((prevData) => ({ ...prevData, [name]: value }));
     }
   };
 
   const handleClientChange = (event: SelectChangeEvent<string>) => {
     const clientId = event.target.value;
-    setOperationData(prevData => ({
+    setOperationData((prevData) => ({
       ...prevData,
       client: { id: clientId },
-      production: { id: '' }
+      production: { id: '' },
     }));
   };
 
   const handleProductionChange = (event: SelectChangeEvent<string>) => {
-    setOperationData(prevData => ({
+    setOperationData((prevData) => ({
       ...prevData,
       production: { id: event.target.value },
     }));
   };
 
-  const handleMeasurementChange = (event: SelectChangeEvent<string>, name: string) => {
-    setOperationData(prevData => ({ ...prevData, [name]: event.target.value }));
+  const handleMeasurementChange = (
+    event: SelectChangeEvent<string>,
+    name: string,
+  ) => {
+    setOperationData((prevData) => ({
+      ...prevData,
+      [name]: event.target.value,
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -149,14 +171,21 @@ const RegisterOperation: React.FC = () => {
       setSuccess('Operação registrada com sucesso!');
       setOperationData(initialOperationData);
     } catch (err: any) {
-      setError(`Erro ao registrar operação: ${err?.response?.data?.message || err.message || 'Erro desconhecido'}. Tente novamente mais tarde.`);
+      setError(
+        `Erro ao registrar operação: ${err?.response?.data?.message || err.message || 'Erro desconhecido'}. Tente novamente mais tarde.`,
+      );
       console.error(err);
     }
   };
 
   if (loadingClients) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
         <CircularProgress />
       </Box>
     );
@@ -189,7 +218,7 @@ const RegisterOperation: React.FC = () => {
         <FormControl fullWidth margin="normal" required>
           <InputLabel>Cliente</InputLabel>
           <Select value={operationData.client.id} onChange={handleClientChange}>
-            {clients.map(client => (
+            {clients.map((client) => (
               <MenuItem key={client.id} value={client.id}>
                 {client.name}
               </MenuItem>
@@ -208,7 +237,7 @@ const RegisterOperation: React.FC = () => {
             value={operationData.production.id}
             onChange={handleProductionChange}
           >
-            {productions.map(production => (
+            {productions.map((production) => (
               <MenuItem key={production.id} value={production.id}>
                 {production.type}
               </MenuItem>
@@ -242,7 +271,7 @@ const RegisterOperation: React.FC = () => {
           <InputLabel>Unidade de Medida (Área de Terra)</InputLabel>
           <Select
             value={operationData.measurement_land_area || ''}
-            onChange={e =>
+            onChange={(e) =>
               handleMeasurementChange(e, 'measurement_land_area')
             }
           >
@@ -269,7 +298,7 @@ const RegisterOperation: React.FC = () => {
           <InputLabel>Unidade de Medida (Área de Produção)</InputLabel>
           <Select
             value={operationData.measurement_production_area || ''}
-            onChange={e =>
+            onChange={(e) =>
               handleMeasurementChange(e, 'measurement_production_area')
             }
           >
@@ -296,7 +325,7 @@ const RegisterOperation: React.FC = () => {
           <InputLabel>Unidade de Medida (Área Arada)</InputLabel>
           <Select
             value={operationData.measurement_plowed_area || ''}
-            onChange={e =>
+            onChange={(e) =>
               handleMeasurementChange(e, 'measurement_plowed_area')
             }
           >
@@ -323,7 +352,7 @@ const RegisterOperation: React.FC = () => {
           <InputLabel>Unidade de Medida (Produção Agrícola)</InputLabel>
           <Select
             value={operationData.measurement_agricultural_production || ''}
-            onChange={e =>
+            onChange={(e) =>
               handleMeasurementChange(e, 'measurement_agricultural_production')
             }
           >

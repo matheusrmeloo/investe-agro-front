@@ -29,8 +29,7 @@ const AppRoutes: React.FC = () => {
             element={<RegisterNeighborhood />}
           />
           <Route path="/register-operation" element={<RegisterOperation />} />;
-          <Route path="/operations" element={<ListOperations />} />;
-          ;
+          <Route path="/operations" element={<ListOperations />} />; ;
         </Route>
       </Routes>
     </Router>
