@@ -265,6 +265,9 @@ const RegisterOperation: React.FC = () => {
               }
               onChange={handleInputChange}
               margin="normal"
+              inputProps={{
+                min: 0,
+              }}
             />
           </Grid>
           <Grid item xs={12} md={6}>
@@ -296,6 +299,9 @@ const RegisterOperation: React.FC = () => {
               }
               onChange={handleInputChange}
               margin="normal"
+              inputProps={{
+                min: 0,
+              }}
             />
           </Grid>
           <Grid item xs={12} md={6}>
@@ -327,6 +333,9 @@ const RegisterOperation: React.FC = () => {
               }
               onChange={handleInputChange}
               margin="normal"
+              inputProps={{
+                min: 0,
+              }}
             />
           </Grid>
           <Grid item xs={12} md={6}>
@@ -358,6 +367,9 @@ const RegisterOperation: React.FC = () => {
               }
               onChange={handleInputChange}
               margin="normal"
+              inputProps={{
+                min: 0,
+              }}
             />
           </Grid>
           <Grid item xs={12} md={6}>
@@ -372,9 +384,8 @@ const RegisterOperation: React.FC = () => {
                   )
                 }
               >
-                <MenuItem value="g">g</MenuItem>
-                <MenuItem value="kg">kg</MenuItem>
-                <MenuItem value="t">t</MenuItem>
+                <MenuItem value="kg">Kilo(s)</MenuItem>
+                <MenuItem value="t">Tonelada(s)</MenuItem>
               </Select>
             </FormControl>
           </Grid>
